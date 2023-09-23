@@ -9,7 +9,7 @@ title: About
 
 {{< figure src="/static/profile_photo.jpg" alt="An elephant at sunset" class="profile_pic" >}}
 
-I'm Miguel González Duque, a mathematician from the Universidad Nacional de Colombia, and a PhD in Machine Learning from the IT University of Copenhagen (supervised by [Sebastian Risi](http://sebastianrisi.com/) and [Søren Hauberg](http://www2.compute.dtu.dk/~sohau/)).
+I'm Miguel González Duque, a mathematician from the Universidad Nacional de Colombia, and a PhD from the IT University of Copenhagen (supervised by [Sebastian Risi](http://sebastianrisi.com/) and [Søren Hauberg](http://www2.compute.dtu.dk/~sohau/)).
 
 I'm mostly interested in applications of probabilistic modeling, geometry and optimization. You can find some of my projects on [my GitHub profile](https://github.com/miguelgondu).
 
