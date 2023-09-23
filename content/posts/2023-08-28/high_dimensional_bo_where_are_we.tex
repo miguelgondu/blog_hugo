@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fullpage}
+\usepackage{fourier}
+\usepackage{xcolor}
+\usepackage[colorlinks=true, linkcolor=blue!75, citecolor=blue!75, urlcolor=blue!75]{hyperref}
+
+\title{High-dimensional Bayesian Optimization: Where are we?}
+\author{Miguel González Duque}
+\date{}
+
+\setlength{\parskip}{\smallskipamount}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introduction}
+
+In this blogpost, I discuss some recent advancements in high dimensional Bayesian Optimization (BO), and include some practical experiments to benchmark where we currently are. The advancements I present here are definitely not all-encompassing, but rather biased towards the types of BO being done \textit{in latent spaces}, using methods like Generative Adversarial Networks, Variational Autoencoders or other types of generative models.
+
+Some prerequisites: I assume you are familiar with Gaussian Processes and Bayesian Optimization \href{https://www.miguelgondu.com/blogposts/2023-07-31/intro-to-bo/}{to the extent I discussed them in the previous post}. Besides the benchmarks for optimization we used in said blogpost (e.g. \texttt{easom} or \texttt{cross-in-tray}), this blogpost includes benchmarks in higher-dimensional latent spaces, as well as searching for the parameters of small neural networks.
+
+This blogpost follows, among other references listed at the end, the survey by Binois and Wycoff called \textit{A Survey on High-dimensional Gaussian Process Modeling with Application to Bayesian Optimization} \cite{BinoisWycoff:high-dimensional-bo:2022}.\footnote{\url{https://dl.acm.org/doi/pdf/10.1145/3545611}}
+
+\section*{Vanilla Bayesian Optimization does not scale with dimensions}
+
+[TODO: write this in more detail]
+
+There are two reasons why Bayesian Optimization, as we discussed it in the previous post, doesn't scale well with higher dimensions.
+
+\section*{First alternative: just drop (irrelevant) dimensions}
+
+[Randomly dropping dimensions, or dropping dimensions according to ARD]
+
+\section*{Additive kernels}
+
+[Durrande's work]
+
+
+
+\bibliographystyle{apalike}
+\bibliography{biblio}
+
+\end{document}
