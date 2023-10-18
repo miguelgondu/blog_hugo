@@ -1,8 +1,0 @@
-\begin{thebibliography}{}
-
-\bibitem[Binois and Wycoff, 2022]{BinoisWycoff:high-dimensional-bo:2022}
-Binois, M. and Wycoff, N. (2022).
-\newblock A survey on high-dimensional gaussian process modeling with application to bayesian optimization.
-\newblock {\em ACM Transactions on Evolutionary Learning and Optimization}, 2(2):1--26.
-
-\end{thebibliography}

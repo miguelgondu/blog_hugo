@@ -6,3 +6,6 @@ public/
 *.log
 *.synctex.gz
 *.fls
+*.bbl
+*.blg
+*.out
