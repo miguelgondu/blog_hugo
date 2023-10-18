@@ -5,7 +5,7 @@
 \usepackage{xcolor}
 \usepackage[colorlinks=true, linkcolor=blue!75, citecolor=blue!75, urlcolor=blue!75]{hyperref}
 
-\title{High-dimensional Bayesian Optimization: Where are we?}
+\title{High-dimensional Bayesian Optimization \\ Are we there yet?}
 \author{Miguel González Duque}
 \date{}
 
@@ -18,11 +18,27 @@
 
 \section*{Introduction}
 
-In this blogpost, I discuss some recent advancements in high dimensional Bayesian Optimization (BO), and include some practical experiments to benchmark where we currently are. The advancements I present here are definitely not all-encompassing, but rather biased towards the types of BO being done \textit{in latent spaces}, using methods like Generative Adversarial Networks, Variational Autoencoders or other types of generative models.
+It is folk knowledge that (exact) Gaussian Process inference doesn't scale with nethier dimension nor size of the dataset. Recently, though, several efforts have been put into scaling these two aspects in both GP training and inference [TODO: cite AGW, cite Javier, cite the GPyTorch paper].
 
-Some prerequisites: I assume you are familiar with Gaussian Processes and Bayesian Optimization \href{https://www.miguelgondu.com/blogposts/2023-07-31/intro-to-bo/}{to the extent I discussed them in the previous post}. Besides the benchmarks for optimization we used in said blogpost (e.g. \texttt{easom} or \texttt{cross-in-tray}), this blogpost includes benchmarks in higher-dimensional latent spaces, as well as searching for the parameters of small neural networks.
+This blogpost describes these advancements and tries to answer the question \textit{are we there yet?} We will focus on high-dimensional Bayesian Optimization using GPs as surrogate models, varying both dimension and dataset size for a running example: \textit{latent space optimization} of molecules (represented as SELFIES strings) and of Super Mario Bros levels.
+
+Some prerequisites: I assume you are familiar with Gaussian Processes and Bayesian Optimization \href{https://www.miguelgondu.com/blogposts/2023-07-31/intro-to-bo/}{to the extent I discussed them in the previous post}.
 
 This blogpost follows, among other references listed at the end, the survey by Binois and Wycoff called \textit{A Survey on High-dimensional Gaussian Process Modeling with Application to Bayesian Optimization} \cite{BinoisWycoff:high-dimensional-bo:2022}.\footnote{\url{https://dl.acm.org/doi/pdf/10.1145/3545611}}
+
+\section*{Running experiment: latent space optimization}
+
+\subsection*{On SELFIES and Mario}
+
+[Describe SELFIES strings, describe the SMB task]
+
+[Learning latent space representations using a VAE]
+
+\subsection*{A baseline: CMA-ES}
+
+[Describe CMA-ES, describe it's drawbacks in terms of sample efficiency, and discuss its resilience against high dimensions (?)]
+
+\subsection*{Another baseline: last-layer ensemble instead of GPs}
 
 \section*{Vanilla Bayesian Optimization does not scale with dimensions}
 
