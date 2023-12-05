@@ -5,7 +5,7 @@
 \usepackage{xcolor}
 \usepackage[colorlinks=true, linkcolor=blue!75, citecolor=blue!75, urlcolor=blue!75]{hyperref}
 
-\title{High-dimensional Bayesian Optimization \\ Are we there yet?}
+\title{High-dimensional Bayesian Optimization \\ Where are we?}
 \author{Miguel González Duque}
 \date{}
 
@@ -20,7 +20,9 @@
 
 It is folk knowledge that (exact) Gaussian Process inference doesn't scale with nethier dimension nor size of the dataset. Recently, though, several efforts have been put into scaling these two aspects in both GP training and inference [TODO: cite AGW, cite Javier, cite the GPyTorch paper].
 
-This blogpost describes these advancements and tries to answer the question \textit{are we there yet?} We will focus on high-dimensional Bayesian Optimization using GPs as surrogate models, varying both dimension and dataset size for a running example: \textit{latent space optimization} of molecules (represented as SELFIES strings) and of Super Mario Bros levels.
+This blogpost describes these advancements and tries to answer the question \textit{where are we?} By this, we mean: how large can our datasets get (both in size and the dimension of the input data).
+
+We will focus on high-dimensional Bayesian Optimization using GPs as surrogate models, varying both dimension and dataset size for a running example: \textit{latent space optimization} of molecules (represented as SELFIES strings) and of Super Mario Bros levels.
 
 Some prerequisites: I assume you are familiar with Gaussian Processes and Bayesian Optimization \href{https://www.miguelgondu.com/blogposts/2023-07-31/intro-to-bo/}{to the extent I discussed them in the previous post}.
 
