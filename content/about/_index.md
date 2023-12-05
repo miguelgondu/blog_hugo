@@ -19,7 +19,7 @@ Feel free to contact me at miguelgondu(at)gmail(dot)com.
 
 -   Machine Learning Engineer at the [Center for Basic Machine Learning Research in Life Science](https://mlls.dk/), working with [Wouter Boomsma](https://di.ku.dk/english/staff/vip/?pure=en/persons/275482) and [Søren Hauberg](http://www2.compute.dtu.dk/~sohau/) (2023-current).
 -   PhD Fellow at the [Creative AI Lab](https://game.itu.dk/groups/creativeai/), IT University of Copenhagen (2019-2023).
--   PhD Sabbatical at the *Bosch Center for AI*, working with [Leonel Rozo](https://leonelrozo.weebly.com/) on using Gaussian Processes for representation and regression of robotic data (6 months in 2022).
+-   PhD Sabbatical at the *Bosch Center for AI*, working on using Gaussian Processes for representation and regression of robotic data (6 months in 2022).
 
 For more details on my professional experience, [check my LinkedIn](https://www.linkedin.com/in/miguelgondu/).
 
