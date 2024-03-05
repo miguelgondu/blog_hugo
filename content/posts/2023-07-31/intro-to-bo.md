@@ -361,8 +361,6 @@ Notice that, for {{< katex >}}\beta=1{{< /katex >}}, the optimization gets stuck
 
 {{< figure src="/static/assets/bo_blogpost/bo_w_UCB_500.gif" alt="A GIF showing how Upper Confidence Bound-based Bayesian Optimization works: we fit a Gaussian Process and use the uncertainty estimates to compute the mean plus a multiple of the standard deviation, which we consider an optimistic choice for where to sample next. In this case, the beta is chosen to be 5.">}}
 
-{{< figure src="/static/assets/bo_blogpost/bo_w_UCB_500.gif" alt="A GIF showing how Upper Confidence Bound-based Bayesian Optimization works: we fit a Gaussian Process and use the uncertainty estimates to compute the mean plus a multiple of the standard deviation, which we consider an optimistic choice for where to sample next. In this case, the beta is chosen to be 5."  >}}
-
 ## Bayesian Optimization in practice: BoTorch
 
 BoTorch is a Python library that interoperates well with GPyTorch for running BO experiments. All the animations I presented above were made by fitting BoTorch's models for exact GP inference, and by using their implementations of the acquisition functions (except for Thompson Sampling).
