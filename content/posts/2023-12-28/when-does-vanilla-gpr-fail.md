@@ -110,15 +110,15 @@ Notice how **the average distance between randomly sampled points starts to grow
 
 Our stationary kernels should reflect this. By including lengthscales, our computation of correlation is actually mediated by hyperparameters that we tune during training. Lengthscales govern the "zone of influence" of a given training point: large values allow GPs to have higher correlation _further away_, and lower correlations mean that the zone of influence of a given training point is small, distance-wise. Fig. 2 of [Hvafner et al. 2023](https://arxiv.org/abs/2402.02229) exemplifies this.
 
-{{< figure src="/static/assets/hdgp_blogpost/lengthscale_impact.png" alt="Impact of the lengthscale on GP regression, taken from Hvafner" class="largeSize" title="The impact of lengthscales on Gaussian Process regression. (Image taken from Hvafner et al. 2023)" >}}
+{{< figure src="/static/assets/hdgp_blogpost/lengthscale_impact.png" alt="Impact of the lengthscale on GP regression, taken from Hvafner" class="largeSize" title="The impact of lengthscales on Gaussian Process regression. (Image source: Fig. 2 of Hvafner et al. 2023)" >}}
 
-## The toy-est of toy problems
+## How far up can we go?
 
-A way to check _how far up we can go_ with vanilla GP Regression is to consider the most simple function to predict. We use a slightly shifted version of a sphere:
+A way to check _how far up we can go_ with vanilla GP Regression is to consider the most simple function to predict. Consider a slightly shifted sphere:
 {{< katex display>}}
 f_{\bm{r}}(\bm{x}) = \sum_{i=1}^D (x_i - r_i)^2
 {{< /katex >}}
-where we select the radius at random from a standard Gaussian.
+where we select the offset at random from a standard Gaussian.
 
 Using {{< katex >}}f_{\mathbb{r}}{{< /katex >}}, we construct a noisy dataset {{< katex >}}\{(\bm{x}_n, y_n)\}_{n=1}^N{{< /katex >}} where each {{< katex >}}y{{< /katex >}} was perturbed by noisy samples from a tiny Gaussian
 {{< katex display>}}
