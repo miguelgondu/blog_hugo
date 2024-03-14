@@ -2,7 +2,7 @@
 date: "2023-12-28"
 title: "Do Gaussian Processes scale well with dimension?"
 slug: how-gps-scale-with-dimension
-image: /static/assets/bo_blogpost/bo_w_TS.gif
+image: /static/assets/hdgp_blogpost/pairwise_distances_unit_cube.jpg
 ---
 
 > This blogpost assumes you're already familiarized with the basics of Gaussian Processes and Bayesian Optimization. Check [my previous blogpost](../2023-07-31/intro-to-bo.md) for an introduction.
@@ -24,7 +24,7 @@ In this blogpost I discuss said paper, and I re-implement one of its experiments
 
 ## The curse of dimensionality and kernel methods
 
-**Measuring correlation using kernels**
+### Measuring correlation using kernels
 
 Recall that GPs assume the following: given a function {{< katex >}}f\colon\mathbb{R}^n\to\mathbb{R}{{< /katex >}} and two inputs {{< katex >}}\bm{x}, \bm{x}'{{< /katex >}}, then
 {{< katex display>}}
@@ -35,9 +35,9 @@ where {{< katex >}}k\colon\mathbb{R}^D\times\mathbb{R}^D\to\mathbb{R}{{< /katex 
 A large family of these kernels only depend on the distance between inputs {{< katex >}}\|\bm{x} - \bm{x}'\|{{< /katex >}}, such as the Radial Basis Function (RBF):
 
 {{< katex display>}}
-k_{\text{RBF}}(\bm{x}, \bm{x}';\,\sigma, \Lambda) = \sigma\exp\left(-\frac{1}{2}(\bm{x}-\bm{x}')^\top\Lambda^{-2} (\bm{x}-\bm{x}')\right),
+k_{\text{RBF}}(\bm{x}, \bm{x}';\,\sigma, \Theta) = \sigma\exp\left(-\frac{1}{2}(\bm{x}-\bm{x}')^\top\Theta^{-2} (\bm{x}-\bm{x}')\right),
 {{< /katex >}}
-where {{< katex >}}\sigma>0{{< /katex >}} is an output scale, and {{< katex >}}\Lambda{{< /katex >}} is a diagonal matrix with lengthscales.
+where {{< katex >}}\sigma>0{{< /katex >}} is an output scale, and {{< katex >}}\Theta{{< /katex >}} is a diagonal matrix with lengthscales.
 
 These kernels are called *stationary*. An example of a kernel that is **not stationary** is the polynomial kernel:
 {{< katex display>}}
@@ -46,7 +46,7 @@ k_{\text{p}}(\bm{x}, \bm{x}';\,\sigma, c, d) = \sigma(\bm{x}^{\top}\bm{x}' + c)^
 where {{< katex >}}c{{< /katex >}} is an offset, and {{< katex >}}d{{< /katex >}} is the degree of the polinomial. The degree of the polynomial is usually specified by the user, and the offset is optimized through the marginal likelihood of the dataset.
 
 <!-- [Remembering the curse of dimensionality] -->
-**The curse of dimensionality**
+### The curse of dimensionality
 
 Put shortly, the curse of dimensionality says that distances start to become meaningless in higher dimensions, and that space becomes more and more sparse.
 
@@ -108,7 +108,9 @@ Visualizing these distances renders this plot, where we color by different dimen
 
 Notice how **the average distance between randomly sampled points starts to grow**, even if we restrict ourselves to the unit square.
 
-Our stationary kernels should reflect this. By including lengthscales, our computation of correlation is actually mediated by hyperparameters that we tune during training. Lengthscales govern the "zone of influence" of a given training point: large values allow GPs to have higher correlation _further away_, and lower correlations mean that the zone of influence of a given training point is small, distance-wise.
+Our stationary kernels should reflect this. By including lengthscales, our computation of correlation is actually mediated by hyperparameters that we tune during training. Lengthscales govern the "zone of influence" of a given training point: large values allow GPs to have higher correlation _further away_, and lower correlations mean that the zone of influence of a given training point is small, distance-wise. Fig. 2 of [Hvafner et al. 2023](https://arxiv.org/abs/2402.02229) exemplifies this.
+
+{{< figure src="/static/assets/hdgp_blogpost/lengthscale_impact.png" alt="Impact of the lengthscale on GP regression, taken from Hvafner" class="largeSize" title="The impact of lengthscales on Gaussian Process regression. (Image taken from Hvafner et al. 2023)" >}}
 
 ## The toy-est of toy problems
 
