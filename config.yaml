@@ -41,8 +41,3 @@ permalinks:
     posts: /blogposts/:year-:month-:day/:filename/
   section:
     posts: /blogposts/
-  
-googlefonts:
-  - "Atkinson Hyperlegible Regular"
-
-fontbody: "Atkinson Hyperlegible Regular"
