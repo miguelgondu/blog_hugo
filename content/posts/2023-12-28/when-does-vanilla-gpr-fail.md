@@ -16,30 +16,80 @@ The main hypothesis is that GPs fail because of the curse of dimensionality: sin
 
 [^botorch-and-float64]: For example, `botorch` always suggests working on double precision when running Bayesian Optimization with their models and kernels.
 
-Last month, [Carl Hvafner, Erik Orm Hellsten and Luigi Nardi released a paper called *Vanilla Bayesian Optimization Performs Great in High Dimensions*](https://arxiv.org/abs/2402.02229), in which they explain the main reasons why GPs fail in high dimensions, disputing and disproving this folk knowledge.
+These hypotheses might be misguided. Last month, [Carl Hvafner, Erik Orm Hellsten and Luigi Nardi released a paper called *Vanilla Bayesian Optimization Performs Great in High Dimensions*](https://arxiv.org/abs/2402.02229), in which they explain the main reasons why GPs fail in high dimensions, disputing and disproving this folk knowledge.
 
-In this blogpost I discuss said paper, and I re-implement one of its experiments in a toy setting.[^I-got-scooped] I only assume that you're familiar with [my previous blogpost on GPs and Bayesian Optimization](../2023-07-31/intro-to-bo.md).
+In this blogpost I explore the failures of GPs to fit in high dimensions, following what Hvafner et al. propose in their recent paper.[^I-got-scooped]
+
+I only assume that you're familiar with [my previous blogpost on GPs and Bayesian Optimization](../2023-07-31/intro-to-bo.md).
 
 [^I-got-scooped]: Actually, I started writing this blogpost in Dec. of last year, wanting to explore the impact several design choices had on GP regression, but I got scooped :(.
+
+## Vanilla GPs fail to fit really simple functions
+
+### A really simple function
+
+Consider the **shifted sphere** function {{< katex >}}f_{\bm{r}}:\mathbb{R}^D\to\mathbb{R}{{< /katex >}} given by
+{{< katex display>}}
+f_{\bm{r}}(\bm{x}) = \sum_{i=1}^D (x_i - r_i)^2,
+{{< /katex >}}
+where {{< katex >}}\bm{r}{{< /katex >}} is a random offset. This function is extremely simple. In 2 dimensions it's a parabola, in 3 it's a paraboloid, and so on. It's a second-degree polynomial on its inputs {{< katex >}}\bm{x} = (x_1, \dots, x_D){{< /katex >}}, and it is as smooth as functions come.
+
+[Image of this function in 2D]
+
+### Fitting a GP to it
+
+We should expect vanilla GP regression to be able to fit this function quite easily, even in high dimensions. Let me show you when it fails.
+
+For our training set, we sample {{< katex >}}N{{< /katex >}} points from a unit Gaussian in {{< katex >}}D{{< /katex >}} dimensions and add a little bit of random noise:
+{{< katex display>}}
+\begin{array}{ll}
+\bm{x}_n \sim \mathcal{N}(\bm{0}, \bm{I}_D)&\text{(data dist.)}\\[0.2cm]
+y_n = f_{\bm{r}}(\bm{x}_n) + \epsilon,\epsilon \sim \mathcal{N}(0, 0.25)&\text{(noisy output)}.
+\end{array}
+{{< /katex >}}
+
+And indeed, in the 1D case we get a pretty good fit:
+
+[Image of this function in 2D with the training inputs, and gp prediction]
+
+We can also quantify the quality of the fit by plotting the mean predicted values against the actual values for a small test set, sampled from the same distribution and corrputed in the same way. This plot is useful, because it can be computed regardless of the input dimension.
+
+[The plot]
+
+**What happens if we go to higher dimensions?**, Let's try to fit this exact same function, but with {{< katex >}}D=64{{< /katex >}}. Since we can't visualize {{< katex >}}\mathbb{R}^{64+1}{{< /katex >}} space, we can only rely on these second plots I showed you, the ones that compare predictions to actual values... Immediately, we can see that vanilla GP fails and defaults to predicting just the mean:
+
+[The plot for D=64, N=whatever.]
+
+Let me try to find exactly **when** GPs start to fail. Folk knowldege says it's around 20 dimensions, but if we sweep for several values of $N$ and $D$, we get the following table:
+
+[The nice table]
+
+where `yes :)` means that the model learned _something_, and didn't default to the mean. The breaking point for this function in particular seems to be around 32 dimensions, and we notice that the number of training points is of course important.
+
+### Why?!
+
+Why are GPs failing to fit even a simple function like a high-dimensional paraboloid? As I said in the introduction,the community argues that this is a failure of stationary kernels' use of distance for correlation. In the next section I talk a little bit about kernels and about the curse of dimensionality.
 
 ## The curse of dimensionality and kernel methods
 
 ### Measuring correlation using kernels
 
-Recall that GPs assume the following: given a function {{< katex >}}f\colon\mathbb{R}^n\to\mathbb{R}{{< /katex >}} and two inputs {{< katex >}}\bm{x}, \bm{x}'{{< /katex >}}, then
+Recall that GPs assume the following: given a function {{< katex >}}f\colon\mathbb{R}^D\to\mathbb{R}{{< /katex >}} and two inputs {{< katex >}}\bm{x}, \bm{x}'\in\mathbb{R}^D{{< /katex >}}, then
 {{< katex display>}}
 \text{cov}(f(\bm{x}), f(\bm{x}')) = k(\bm{x}, \bm{x}')
 {{< /katex >}}
-where {{< katex >}}k\colon\mathbb{R}^D\times\mathbb{R}^D\to\mathbb{R}{{< /katex >}} is a kernel function (i.e. symmetric positive-definite). In other words, we make statements about how correlated two function evaluations are (the left side of the equation) using kernels as a proxy (the right side).
+where {{< katex >}}k\colon\mathbb{R}^D\times\mathbb{R}^D\to\mathbb{R}{{< /katex >}} is a kernel function (i.e. symmetric positive-definite).
 
-A large family of these kernels only depend on the distance between inputs {{< katex >}}\|\bm{x} - \bm{x}'\|{{< /katex >}}, such as the Radial Basis Function (RBF):
+In other words, we make statements about how correlated two function evaluations are (the left side of the equation) using kernels as a proxy (the right side).
+
+A large family of these kernels only depend on the distance between inputs {{< katex >}}(x_i - x_i')^2{{< /katex >}}, such as the Radial Basis Function (RBF):
 
 {{< katex display>}}
 k_{\text{RBF}}(\bm{x}, \bm{x}';\,\sigma, \Theta) = \sigma\exp\left(-\frac{1}{2}(\bm{x}-\bm{x}')^\top\Theta^{-2} (\bm{x}-\bm{x}')\right),
 {{< /katex >}}
 where {{< katex >}}\sigma>0{{< /katex >}} is an output scale, and {{< katex >}}\Theta{{< /katex >}} is a diagonal matrix with lengthscales.
 
-These kernels are called *stationary*. An example of a kernel that is **not stationary** is the polynomial kernel:
+These distance-based kernels are called *stationary*. An example of a kernel that is **not stationary** is the polynomial kernel:
 {{< katex display>}}
 k_{\text{p}}(\bm{x}, \bm{x}';\,\sigma, c, d) = \sigma(\bm{x}^{\top}\bm{x}' + c)^d,
 {{< /katex >}}
@@ -108,64 +158,17 @@ Visualizing these distances renders this plot, where we color by different dimen
 
 Notice how **the average distance between randomly sampled points starts to grow**, even if we restrict ourselves to the unit square.
 
-Our stationary kernels should reflect this. By including lengthscales, our computation of correlation is actually mediated by hyperparameters that we tune during training. Lengthscales govern the "zone of influence" of a given training point: large values allow GPs to have higher correlation _further away_, and lower correlations mean that the zone of influence of a given training point is small, distance-wise. Fig. 2 of [Hvafner et al. 2023](https://arxiv.org/abs/2402.02229) exemplifies this.
+
+### Lengthscales, lengthscales, lengthscales
+
+Our stationary kernels should reflect this change in distance. By including lengthscales, our computation of correlation is actually mediated by hyperparameters that we tune during training. Lengthscales govern the "zone of influence" of a given training point: large values allow GPs to have higher correlation _further away_, and lower correlations mean that the zone of influence of a given training point is small, distance-wise. Fig. 2 of [Hvafner et al. 2023](https://arxiv.org/abs/2402.02229) exemplifies this beautifully.
 
 {{< figure src="/static/assets/hdgp_blogpost/lengthscale_impact.png" alt="Impact of the lengthscale on GP regression, taken from Hvafner" class="largeSize" title="The impact of lengthscales on Gaussian Process regression. (Image source: Fig. 2 of Hvafner et al. 2023)" >}}
 
-## How far up can we go?
-
-A way to check _how far up we can go_ with vanilla GP Regression is to consider the most simple function to predict. Consider a slightly shifted sphere:
-{{< katex display>}}
-f_{\bm{r}}(\bm{x}) = \sum_{i=1}^D (x_i - r_i)^2
-{{< /katex >}}
-where we select the offset at random from a standard Gaussian.
-
-Using {{< katex >}}f_{\mathbb{r}}{{< /katex >}}, we construct a noisy dataset {{< katex >}}\{(\bm{x}_n, y_n)\}_{n=1}^N{{< /katex >}} where each {{< katex >}}y{{< /katex >}} was perturbed by noisy samples from a tiny Gaussian
-{{< katex display>}}
-\begin{array}{ll}
-\bm{x}_n \sim \mathcal{N}(\bm{0}, \bm{I}_D)&\text{(data dist.)}\\[0.2cm]
-y_n = f_{\bm{r}}(\bm{x}_n) + \epsilon,\epsilon \sim \mathcal{N}(0, 0.25)&\text{(noisy output)}.
-\end{array}
-{{< /katex >}}
-
-To check the impact of stationarity, we test with an RBF and a polinomial kernel separately. In both cases we go for a zero mean and we maximize the marginal likelihood w.r.t the data.[^training-details]
-
-[^training-details]: A little bit more about the training itself: using `gpytorch`, we constructed a basic `ExactGP` and fitted the kernel hyperparameters using adam with a learning rate of {{< katex >}}0.05{{< /katex >}} and {{< katex >}}1000{{< /katex >}} iterations on the whole dataset.
-
-## Measuring model performance beyond 2D
-
-For the cases {{< katex >}}D=1,2{{< /katex >}}, the output of both the underlying function and the GP model can be visualized:
-
-[...Images of both cases]
-
-What can we do for {{< katex >}}D > 2{{< /katex >}}? It's common practice[^for-example-SAASBO] to consider the following: starting with a test dataset of 50 points sampled from the same distribution {{< katex >}}\bm{x}_m^*\sim\mathcal{N}(\bm{0}, \bm{I}_D){{< /katex >}}, we consider the actual function value {{< katex >}}f_\mathbb{r}(\bm{x}_m){{< /katex >}} and the model prediction {{< katex >}}\tilde{f}(\bm{x}_m){{< /katex >}}, and plot them against each other.
-
-[...one example]
-
-In an ideal world, the points in this scatter plot should lie exactly on the diagonal. Here's an example of a poor model's performance:
-
-[...another example]
-
-Numerically, we could consider metrics like mean absolute error, root mean squared error, or the correlation between predictions and actual values. We will focus on correlation.
-
-[^for-example-SAASBO]: For example, check Fig.[...TODO:ADD] of [the `SAASBO` paper](TODO:ADD). 
-
-## Several dimensions and dataset sizes
-
-To check how far up we can go, let's sweep between the following dataset sizes {{< katex >}}N{{< /katex >}} and number of input dimensions {{< katex >}}D{{< /katex >}}:
-{{< katex display>}}
-N = \{50, 100, 500, 1000, 1500, 2000, 2500, 5000, 7500, 10000\},\\[0.2cm] D=\{1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024\}
-{{< /katex >}}
+How are the lengthscales looking in our simple example? [TODO: do this analysis]
 
 
-[Using the toy high-dimensional problems described above, we check whether the GP is able to learn _something_ in higher dimensions. We compare that against e.g. simple linear regression]
+## A simple fix: Imposing larger lengthscales
 
-[The moneyshot: a plot of predicted vs. actual values for a test set, like the one in SAASBO]
-
-## Experiment: high-dimensional Bayesian Optimization
-
-[HDBO is even harder: not only do we need to worry about the GP actually learning stuff, but we also need to make sure that we can optimize the acquisition function]
-
-[The experimental set-up: using the toy high-dimensional problems, we compare the maximum achieved in different dimensions. We also compare against simple evolutionary strategies like CMA-ES]
 
 
