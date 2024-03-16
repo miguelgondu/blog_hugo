@@ -88,7 +88,7 @@ where `yes :)` means that the model learned _something_, and didn't default to t
 
 ## Why?!
 
-Why are GPs failing to fit even a simple function like a high-dimensional paraboloid? As I said in the introduction,the community argues that this is a failure of stationary kernels' use of distance for correlation. In the next section I talk a little bit about kernels and about the curse of dimensionality.
+Why are GPs failing to fit even a simple function like a high-dimensional paraboloid? As I said in the introduction, the community argues that this is a failure of stationary kernels' use of distance for correlation. In the next section I talk a little bit about kernels and about the curse of dimensionality.
 
 # The curse of dimensionality and kernel methods
 
@@ -206,7 +206,7 @@ where {{< katex >}}\bm{y}{{< /katex>}} are the noisy observations, {{< katex >}}
 
 Maximizing this quantity w.r.t. {{< katex >}}\theta{{< /katex >}} results in what is called the *Maximum Likelihood Estimate*, or MLE.
 
-To encourage larger lengthscales, we can add a prior distribution for the lengthscales, and try to maximize the *a posteriori* distribution {{< katex >}}p(\theta|\bm{y}, \bm{x}_1,\dots,\bm{x}_N){{< /katex >}}, which is proportional to the product of the likelihood {{< katex >}}p(\bm{y}| \bm{x}_1,\dots,\bm{x}_N, \theta){{< /katex >}} and the prior {{< katex >}}p(\theta){{< /katex >}}. The new function we would try to maximize would then be:
+To encourage larger lengthscales, we can add a prior distribution for them, and try to maximize the *a posteriori* distribution {{< katex >}}p(\theta|\bm{y}, \bm{x}_1,\dots,\bm{x}_N){{< /katex >}}, which is proportional to the product of the likelihood {{< katex >}}p(\bm{y}| \bm{x}_1,\dots,\bm{x}_N, \theta){{< /katex >}} and the prior {{< katex >}}p(\theta){{< /katex >}}. The new function we would try to maximize would then be:
 
 {{< katex display >}}
 \underbrace{-\frac{1}{2}\mathbf{y}^T(K + \sigma_n^2I)^{-1}\mathbf{y} - \frac{1}{2}\log\det(K + \sigma_n^2I) - \frac{n}{2}\log(2\pi)}_{\text{The usual marginal log-likelihood}} - \underbrace{\sum_{i=1}^D\log p(\theta)}_{\text{Regularizer}}.
