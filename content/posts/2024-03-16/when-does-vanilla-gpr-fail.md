@@ -1,5 +1,5 @@
 ---
-date: "2023-12-28"
+date: "2024-03-16"
 title: "Do Gaussian Processes scale well with dimension?"
 slug: how-gps-scale-with-dimension
 image: /static/assets/hdgp_blogpost/ExactGPModelWithLogNormalPrior_comparison_on_256d.jpg
