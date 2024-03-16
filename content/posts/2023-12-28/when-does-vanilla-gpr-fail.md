@@ -2,7 +2,7 @@
 date: "2023-12-28"
 title: "Do Gaussian Processes scale well with dimension?"
 slug: how-gps-scale-with-dimension
-image: /static/assets/hdgp_blogpost/banner.jpg
+image: /static/assets/hdgp_blogpost/ExactGPModelWithLogNormalPrior_comparison_on_256d.jpg
 ---
 
 > This blogpost assumes you're already familiarized with the basics of Gaussian Processes. Check [my previous blogpost](../2023-07-31/intro-to-bo.md) for an introduction.
@@ -16,9 +16,9 @@ The main hypothesis is that GPs fail because of the curse of dimensionality: sin
 
 [^botorch-and-float64]: For example, `botorch` always suggests working on double precision when running Bayesian Optimization with their models and kernels.
 
-These hypotheses might be misguided. Last month, [Carl Hvafner, Erik Orm Hellsten and Luigi Nardi released a paper called *Vanilla Bayesian Optimization Performs Great in High Dimensions*](https://arxiv.org/abs/2402.02229), in which they explain the main reasons why GPs fail in high dimensions, disputing and disproving this folk knowledge.
+These hypotheses might be misguided. Last month, [Carl Hvarfner, Erik Orm Hellsten and Luigi Nardi released a paper called *Vanilla Bayesian Optimization Performs Great in High Dimensions*](https://arxiv.org/abs/2402.02229), in which they explain the main reasons why GPs fail in high dimensions, disputing and disproving this folk knowledge.
 
-In this blogpost I explore the failures of GPs to fit in high dimensions, following what Hvafner et al. propose in their recent paper.[^I-got-scooped]
+In this blogpost I explore the failures of GPs to fit in high dimensions, following what Hvarfner et al. propose in their recent paper.[^I-got-scooped]
 
 I only assume that you're familiar with [my previous blogpost on GPs and Bayesian Optimization](../2023-07-31/intro-to-bo.md).
 
@@ -78,7 +78,7 @@ We can also quantify the quality of the fit by plotting the mean predicted value
 
 {{< figure src="/static/assets/hdgp_blogpost/comparison_on_64d.jpg" alt="Actual vs. predicted values in a model fitted on a 1 dimensional shifted sphere" class="largeSize" title="A bad fit - predictions default to the mean on a 64D shifted sphere, even using 2000 training points" >}}
 
-That is, the model didn't learn a thing. It's defaulting to a certain mean prediction. Let me try to find exactly **when** GPs start to fail. Folk knowldege says it's around 20 dimensions, but if we sweep for several values of $N$ and $D$, we get the following table:
+That is, the model didn't learn a thing. It's defaulting to a certain mean prediction. Let me try to find exactly **when** GPs start to fail. Folk knowldege says it's around 20 dimensions, but if we sweep for several values of {{< katex >}}N{{< /katex >}} and {{< katex >}}D{{< /katex >}}, we get the following table:
 
 {{< figure src="/static/assets/hdgp_blogpost/ExactGPModel_nice_table.jpg" alt="A table showing whether the model learned anything, sweeping across number of points and dimensions" class="largeSize" title="Table - nr. of training points & input dimension, and whether the model learned anything" >}}
 
@@ -100,18 +100,18 @@ where {{< katex >}}k\colon\mathbb{R}^D\times\mathbb{R}^D\to\mathbb{R}{{< /katex 
 
 In other words, we make statements about how correlated two function evaluations are (the left side of the equation) using kernels as a proxy (the right side).
 
-A large family of these kernels only depend on the distance between inputs {{< katex >}}(x_i - x_i')^2{{< /katex >}}, such as the Radial Basis Function (RBF):
+A large family of these kernels (called **stationary**) only depend on the distance between inputs {{< katex >}}(x_i - x_i')^2{{< /katex >}}, such as the Radial Basis Function (RBF):
 
 {{< katex display>}}
 k_{\text{RBF}}(\bm{x}, \bm{x}';\,\sigma, \Theta) = \sigma\exp\left(-\frac{1}{2}(\bm{x}-\bm{x}')^\top\Theta^{-2} (\bm{x}-\bm{x}')\right),
 {{< /katex >}}
-where {{< katex >}}\sigma>0{{< /katex >}} is an output scale, and {{< katex >}}\Theta{{< /katex >}} is a diagonal matrix with lengthscales.
+where {{< katex >}}\sigma>0{{< /katex >}} is an output scale, and {{< katex >}}\Theta{{< /katex >}} is a diagonal matrix with lengthscales {{< katex >}}\lambda_i, i=1,\dots,D{{< /katex >}}.
 
-These distance-based kernels are called *stationary*. An example of a kernel that is **not stationary** is the polynomial kernel:
+<!-- These distance-based kernels are called *stationary*. An example of a kernel that is **not stationary** is the polynomial kernel:
 {{< katex display>}}
 k_{\text{p}}(\bm{x}, \bm{x}';\,\sigma, c, d) = \sigma(\bm{x}^{\top}\bm{x}' + c)^d,
 {{< /katex >}}
-where {{< katex >}}c{{< /katex >}} is an offset, and {{< katex >}}d{{< /katex >}} is the degree of the polinomial. The degree of the polynomial is usually specified by the user, and the offset is optimized through the marginal likelihood of the dataset.
+where {{< katex >}}c{{< /katex >}} is an offset, and {{< katex >}}d{{< /katex >}} is the degree of the polinomial. The degree of the polynomial is usually specified by the user, and the offset is optimized through the marginal likelihood of the dataset. -->
 
 <!-- [Remembering the curse of dimensionality] -->
 ## The curse of dimensionality
@@ -179,58 +179,64 @@ Notice how **the average distance between randomly sampled points starts to grow
 
 ## Lengthscales, lengthscales, lengthscales
 
-Our stationary kernels should reflect this change in distance. By including lengthscales, our computation of correlation is actually mediated by hyperparameters that we tune during training. Lengthscales govern the "zone of influence" of a given training point: large values allow GPs to have higher correlation _further away_, and lower correlations mean that the zone of influence of a given training point is small, distance-wise. Fig. 2 of [Hvafner et al. 2023](https://arxiv.org/abs/2402.02229) exemplifies this beautifully.
+Our stationary kernels should reflect this change in distance. By including lengthscales, our computation of correlation is actually mediated by hyperparameters that we tune during training. Lengthscales govern the "zone of influence" of a given training point: large values allow GPs to have higher correlation _further away_, and lower correlations mean that the zone of influence of a given training point is small, distance-wise. Fig. 2 of [Hvarfner et al. 2024](https://arxiv.org/abs/2402.02229) exemplifies this.
 
-{{< figure src="/static/assets/hdgp_blogpost/lengthscale_impact.png" alt="Impact of the lengthscale on GP regression, taken from Hvafner" class="largeSize" title="The impact of lengthscales on Gaussian Process regression. (Image source: Fig. 2 of Hvafner et al. 2023)" >}}
+{{< figure src="/static/assets/hdgp_blogpost/lengthscale_impact.png" alt="Impact of the lengthscale on GP regression, taken from Hvarfner et al 2024" class="largeSize" title="The impact of lengthscales on Gaussian Process regression. (Image source: Fig. 2 of Hvarfner et al. 2024)" >}}
 
-How are the lengthscales looking in our simple example? [TODO: do this analysis]
+How are the lengthscales looking in our simple examples? For the good fit we showed (the one in 1D, with 100 training points), the learned lengthscale is of around `3.64`. In the 64D case, all lengthscales (which are supposed to be different) collapse to `0.693` during training.
 
 # A simple fix: Imposing larger lengthscales
 
-[Hvafner et al.]()'s insight is this: **we should be encouraging larger lengthscales**. They phrase it in the language of model complexity, saying that the functions we might be fitting are not as complex as one may think. There's a mismatch, according to them, between the assumed complexity and the actual complexity of the functions we're fitting.
+[Hvarfner et al.](https://arxiv.org/abs/2402.02229)'s insight is this: **we should be encouraging larger lengthscales**. They phrase it in the language of model complexity, saying that the functions we might be fitting are not as complex as we think. There's a mismatch, according to them, between the assumed complexity and the actual complexity of the functions we're fitting.
 
 Larger lengthscales would allow the kernel to assume correlation between points that are further away, mitigating the curse of dimensionality.
 
-How do we encourage larger lengthscales during training? The answer is easy: regularize the loss.
+How do we encourage larger lengthscales during training? The answer is easy: add a regularization to the loss.
 
 ## MAP vs. MLE estimates
 
 In the previous blogpost, I vaguely stated that kernel hyperparameters can be trained by maximizing the log-marginal likelihood w.r.t. the training points. Being a little bit more explicit, the function we are trying to maximize is this:
 
-[log marginal likelihood of a GP]
+{{< katex display >}}
+\log p(\mathbf{y}|\bm{x}_1,\dots,\bm{x}_N, \theta) = -\frac{1}{2}\mathbf{y}^T(K + \sigma_n^2I)^{-1}\mathbf{y} - \frac{1}{2}\log\det(K + \sigma_n^2I) - \frac{n}{2}\log(2\pi),
+{{< /katex >}}
+where {{< katex >}}\bm{y}{{< /katex>}} are the noisy observations, {{< katex >}}K=[k(\bm{x}_i, \bm{x}_j)]{{< /katex >}} is the Gram matrix, {{< katex >}}\sigma_n > 0{{< /katex>}} is a noise scale, and {{< katex >}}\theta{{< /katex >}} represents all kernel hyperparameters, including of course the lengthscales and {{< katex >}}\sigma_n{{< /katex>}}.
 
-Maximizing this quantity results in what is called the *Maximum Likelihood Estimate*, or MLE.
+Maximizing this quantity w.r.t. {{< katex >}}\theta{{< /katex >}} results in what is called the *Maximum Likelihood Estimate*, or MLE.
 
-To encourage higher lengthscales, we can add a prior distribution for the lengthscales, and try to maximize the *a posteriori* distribution, which is proportional to the product of the likelihood and the prior. The new function we would try to maximize would then be:
+To encourage larger lengthscales, we can add a prior distribution for the lengthscales, and try to maximize the *a posteriori* distribution {{< katex >}}p(\theta|\bm{y}, \bm{x}_1,\dots,\bm{x}_N){{< /katex >}}, which is proportional to the product of the likelihood {{< katex >}}p(\bm{y}| \bm{x}_1,\dots,\bm{x}_N, \theta){{< /katex >}} and the prior {{< katex >}}p(\theta){{< /katex >}}. The new function we would try to maximize would then be:
 
-[the log marginal likelihood of a GP plus the prior]
+{{< katex display >}}
+\underbrace{-\frac{1}{2}\mathbf{y}^T(K + \sigma_n^2I)^{-1}\mathbf{y} - \frac{1}{2}\log\det(K + \sigma_n^2I) - \frac{n}{2}\log(2\pi)}_{\text{The usual marginal log-likelihood}} - \underbrace{\sum_{i=1}^D\log p(\lambda_i)}_{\text{Regularizer}}.
+{{< /katex >}}
 
-Maximizing this renders the *Maximum a posteriori* (MAP) estimate.
+Maximizing this renders the *Maximum a posteriori* (MAP) estimate. Tools like `GPyTorch` allow us to add these regularizers easily using keyword arguments of kernels.
 
-This was all just a fancy way of saying "add a term to your loss that encourages high lengthscales". Phrasing this in a probabilistic language is useful, because we can be more precise about which values we'd like our lengthscales to take.
+This was all just a fancy way of saying "add a term to your loss that encourages large lengthscales". Phrasing this in a probabilistic language is useful, because we can be more precise about which values we'd like our lengthscales to take by thinking of them as _distributions_.
 
 ## Some priors for likelihoods
 
 By default, `gpytorch` considers no prior on the lengthscales. `botorch`'s default `SingleTaskGP` has a {{< katex >}}\lambda_i \sim \text{Gamma}(3, 6){{< /katex>}} prior, which has an average value of {{< katex >}}\mathbb{E}[\lambda_i] = 18{{< /katex >}} and a standard deviation of around {{< katex >}}\sigma_{\lambda_i} = 10.4{{< /katex >}}. Here's the density of this prior:
 
-[The density of a Gamma(3, 6)]
+{{< figure src="/static/assets/hdgp_blogpost/gamma_density.jpg" alt="A plot of the probability density function of a Gamma(3, 6)" class="largeSize" title="Density of the default lengthscale prior in botorch. It doesn't scale with the input dimensionality." >}}
 
 Notice how this is entiery independent of the dimensionality of the input space. As our plot above shows, for dimensionalities above 64, the expected distances between randomly sampled points is already above 20.
 
-[Hvafner et al.]() propose a simple prior that does depend on the dimension of the input space:
+[Hvarfner et al.](https://arxiv.org/abs/2402.02229) propose a simple prior that does depend on the dimension of the input space:
 {{< katex display >}}
-p(\lambda_i) = \text{logNormal}(\mu_0 + \log(D)/2, \sigma_0).
+p(\lambda_i) = \text{logNormal}(\mu_0 + \log(D)/2, \sigma_0),
 {{< /katex >}}
-Let's visualize this prior for different dimensions
+where {{< katex >}}\mu_0{{< /katex >}} and {{< katex >}}\sigma_0 > 0{{< /katex >}} are parameters that could be learned as well.[^they-seemed-to-have-toyed-further] Let's visualize this prior for different dimensions and for a fixed value of these hyperparameters:
 
-[The plot]
+{{< figure src="/static/assets/hdgp_blogpost/log_normal_density.jpg" alt="A plot of the probability density function of a log-normal distribution, sweeping across several dimensions." class="largeSize" title="Density proposed by Hvarfner et al. - Now we're scaling with the dimension." >}}
+
+[^they-seemed-to-have-toyed-further]: If you check the code of Hvarfner et al., [they also seem to scale the standard deviation.](https://github.com/hvarfner/vanilla_bo_in_highdim/blob/62cc3846108ee9ba6fe865a0da65e51f443c768b/benchmarking/gp_priors.py#L48)
 
 # Applying this fix
 
 Applying this fix is as simple as adding a single line to our torch models:
 
 ```python
-# Check the previous blogpost for an implementation of a vanilla GP.
 class ExactGPModelWithLogNormalPrior(gpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(ExactGPModelWithLogNormalPrior, self).__init__(
@@ -238,13 +244,18 @@ class ExactGPModelWithLogNormalPrior(gpytorch.models.ExactGP):
         )
         _, n_dimensions = train_x.shape
 
+        # With a little elbow grease, these
+        # could be trainable parameters as well.
+        mu_0 = 0.0
+        sigma_0 = 1.0
+
         self.mean_module = gpytorch.means.ConstantMean()
         self.covar_module = gpytorch.kernels.ScaleKernel(
             gpytorch.kernels.RBFKernel(
                 ard_num_dims=n_dimensions,
                 # THE ONLY CHANGE IS THE FOLLOWING LINE:
                 lengthscale_prior=gpytorch.priors.LogNormalPrior(
-                    np.log(n_dimensions) / 2, 1.0
+                    mu_0 + np.log(n_dimensions) / 2, sigma_0
                 ),
             )
         )
@@ -252,12 +263,17 @@ class ExactGPModelWithLogNormalPrior(gpytorch.models.ExactGP):
 
 Adding this prior has a dramatic impact on whether the model is able to fit above 32 dimensions in the toy example discussed previously. Here're the model's predictions in, say, 512 dimensions:
 
-[The plot]
+{{< figure src="/static/assets/hdgp_blogpost/ExactGPModelWithLogNormalPrior_comparison_on_256d.jpg" alt="Fitting an exact GP model with a better prior in 256 dimensions" class="largeSize" title="A good fit in high dimensions - Adding a scaling to the prior allows exact GPs to fit high dimensional data." >}}
 
 We can compute the same table we showed for `ExactGPModel`, but for this one:
 
-[The table]
+{{< figure src="/static/assets/hdgp_blogpost/ExactGPModelWithLogNormalPrior_nice_table.jpg" alt="A table showing that exact GPs with scaling log-normal priors are able to learn up to 1024 dimensions with enough training data" class="largeSize" title="Same table as before - With the given prior, the model learns up to 1024 dimensions with enough training data." >}}
+
 
 Now we can fit up to 512 dimensions easily! With enough data, we might be able to fit 1024 dimensions as well.
 
+# Conclusion
 
+Recent research seems to show that vanilla Gaussian Processes are actually capable of going beyond the folk 20-ish dimensions limit. In this blogpost I explored the toy-est of toy examples, and showed you how even a simple polynomial function can't be fitted by Gaussian Process Regression in high dimensions. As [Hvarfner et al.](https://arxiv.org/abs/2402.02229) recognize, this might be a problem with the lengthscales and the assumed complexity of the functions we're fitting.
+
+I discussed these results with a colleague, and he asked a natural question: what's stopping us, then, from having GPs fit in {{< katex >}}D>10000{{< /katex >}} dimensions? Are there any further limitations of exact GP inference (besides, of course, training dataset sizes)?
