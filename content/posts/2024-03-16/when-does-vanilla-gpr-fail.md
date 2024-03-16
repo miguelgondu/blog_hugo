@@ -232,7 +232,7 @@ where {{< katex >}}\mu_0{{< /katex >}} and {{< katex >}}\sigma_0 > 0{{< /katex >
 
 {{< figure src="/static/assets/hdgp_blogpost/log_normal_density.jpg" alt="A plot of the probability density function of a log-normal distribution, sweeping across several dimensions." class="largeSize" title="Density proposed by Hvarfner et al. - Now we're scaling with the dimension." >}}
 
-[^they-seemed-to-have-toyed-further]: If you check the code of Hvarfner et al., [they also seem to scale the standard deviation.](https://github.com/hvarfner/vanilla_bo_in_highdim/blob/62cc3846108ee9ba6fe865a0da65e51f443c768b/benchmarking/gp_priors.py#L48)
+[^they-seemed-to-have-toyed-further]: If you check the code of Hvarfner et al., [they also seem to scale the standard deviation.](https://github.com/hvarfner/vanilla_bo_in_highdim/blob/62cc3846108ee9ba6fe865a0da65e51f443c768b/benchmarking/gp_priors.py#L48) After private correspondence with the authors, they made me notice that they run the experiments without scaling {{< katex >}}\sigma{{< /katex >}}. They experimented with this scaling, but found it to be less stable.
 
 # Applying this fix
 
