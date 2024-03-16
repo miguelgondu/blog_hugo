@@ -5,7 +5,7 @@ slug: how-gps-scale-with-dimension
 image: /static/assets/hdgp_blogpost/ExactGPModelWithLogNormalPrior_comparison_on_256d.jpg
 ---
 
-> This blogpost assumes you're already familiarized with the basics of Gaussian Processes. Check [my previous blogpost](../2023-07-31/intro-to-bo.md) for an introduction.
+> This blogpost assumes you're already familiarized with the basics of Gaussian Processes. Check [my previous blogpost](https://www.miguelgondu.com/blogposts/2023-07-31/intro-to-bo/) for an introduction.
 
 It's folk knowledge that Gaussian Processes (GPs) don't scale well with the dimensionality of their inputs.
 Some people even claim that, if the problem goes beyond 20 input dimensions, then GPs fail to do regression well.[^folk-knowledge]
@@ -34,7 +34,7 @@ where {{< katex >}}\bm{r}{{< /katex >}} is a random offset. This function is ext
 
 ## Fitting a GP to it
 
-Consider the most vanilla GP model: an exact model with an RBF kernel
+Consider the most vanilla GP: an exact model with an RBF kernel
 
 ```python
 class ExactGPModel(gpytorch.models.ExactGP):
