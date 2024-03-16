@@ -18,13 +18,11 @@ The main hypothesis is that GPs fail because of the curse of dimensionality: sin
 
 These hypotheses might be misguided. Last month, [Carl Hvarfner, Erik Orm Hellsten and Luigi Nardi released a paper called *Vanilla Bayesian Optimization Performs Great in High Dimensions*](https://arxiv.org/abs/2402.02229), in which they explain the main reasons why GPs fail in high dimensions, disputing and disproving this folk knowledge.
 
-In this blogpost I explore the failures of GPs to fit in high dimensions, following what Hvarfner et al. propose in their recent paper.[^I-got-scooped]
-
-I only assume that you're familiar with [my previous blogpost on GPs and Bayesian Optimization](../2023-07-31/intro-to-bo.md).
+In this blogpost I explore the failures of GPs to fit in high dimensions using the simplest example I could imagine, following what Hvarfner et al. propose in their recent paper.[^I-got-scooped] I only assume that you're familiar with [my previous blogpost on GPs and Bayesian Optimization](../2023-07-31/intro-to-bo.md).
 
 [^I-got-scooped]: Actually, I started writing this blogpost in Dec. of last year, wanting to explore the impact several design choices had on GP regression, but I got scooped :(.
 
-# Vanilla GPs fail to fit really simple functions
+# Vanilla GPs fail to fit to simple functions
 
 ## A really simple function
 
@@ -36,7 +34,7 @@ where {{< katex >}}\bm{r}{{< /katex >}} is a random offset. This function is ext
 
 ## Fitting a GP to it
 
-Consider the most vanilla GP model:
+Consider the most vanilla GP model: an exact model with an RBF kernel
 
 ```python
 class ExactGPModel(gpytorch.models.ExactGP):
@@ -56,7 +54,7 @@ class ExactGPModel(gpytorch.models.ExactGP):
 
 ```
 
-We should it to fit this function quite easily, even in high dimensions. Let me show you when it fails.
+We should expect it to fit our shifted sphere function quite easily, even in high dimensions. Let me show you how and when it fails.
 
 For our training set, we sample {{< katex >}}N{{< /katex >}} points from a unit Gaussian in {{< katex >}}D{{< /katex >}} dimensions and add a little bit of random noise:
 {{< katex display>}}
@@ -66,19 +64,23 @@ y_n = f_{\bm{r}}(\bm{x}_n) + \epsilon,\epsilon \sim \mathcal{N}(0, 0.25)&\text{(
 \end{array}
 {{< /katex >}}
 
-And indeed, in the 1D case we get a pretty good fit:
+And indeed, in the 1D case we get a pretty good fit:[^training-details]
 
 {{< figure src="/static/assets/hdgp_blogpost/shifted_sphere_1d.jpg" alt="A shifted sphere, approximated using a Gaussian Process" class="largeSize" title="Fitting a vanilla GP to a shifted sphere" >}}
 
-We can also quantify the quality of the fit by plotting the mean predicted values against the actual values for a small test set, sampled from the same distribution and corrputed in the same way. This plot is useful, because it can be computed regardless of the input dimension.
+[^training-details]: (Training details) For all of these experiments, I trained these models using `gpytorch`, optimizing the hyperparameters using Adam and a learning rate of `0.05`. An additional 10% of points were sampled as a validation set, and I trained using early stopping. If you're interested in the code, write me!
+
+We can also quantify the quality of the fit by plotting the mean predicted values against the actual values for a small test set of 50 points, sampled from the same distribution and corrputed in the same way. This plot is useful, because it can be computed regardless of the input dimension:
 
 {{< figure src="/static/assets/hdgp_blogpost/comparison_shifted_sphere_1d.jpg" alt="Actual vs. predicted values in a model fitted on a 1 dimensional shifted sphere" class="largeSize" title="A good fit - predictions and actual values are highly correlated" >}}
 
-**What happens if we go to higher dimensions?**, Let's try to fit this exact same function, but with {{< katex >}}D=64{{< /katex >}}. Since we can't visualize {{< katex >}}\mathbb{R}^{64+1}{{< /katex >}} space, we can only rely on these second plots I showed you, the ones that compare predictions to actual values... Immediately, we can see that vanilla GP fails and defaults to predicting just the mean:
+### What happens if we go to higher dimensions?
 
-{{< figure src="/static/assets/hdgp_blogpost/comparison_on_64d.jpg" alt="Actual vs. predicted values in a model fitted on a 1 dimensional shifted sphere" class="largeSize" title="A bad fit - predictions default to the mean on a 64D shifted sphere, even using 2000 training points" >}}
+Let's try to fit this exact same function, but with {{< katex >}}D=64{{< /katex >}}. Since we can't visualize {{< katex >}}\mathbb{R}^{64+1}{{< /katex >}} space, we can only rely on these second plots I showed you, the ones that compare predictions to actual values... Immediately, we can see that vanilla GP fails and defaults to predicting just the mean:
 
-That is, the model didn't learn a thing. It's defaulting to a certain mean prediction. Let me try to find exactly **when** GPs start to fail. Folk knowldege says it's around 20 dimensions, but if we sweep for several values of {{< katex >}}N{{< /katex >}} and {{< katex >}}D{{< /katex >}}, we get the following table:
+{{< figure src="/static/assets/hdgp_blogpost/comparison_on_64d.jpg" alt="Actual vs. predicted values in a model fitted on a 1 dimensional shifted sphere" class="largeSize" title="A bad fit - predictions default to the mean on 64 dimensions, even when using 2000 training points" >}}
+
+The model didn't learn a thing. It's defaulting to a certain mean prediction. Let me try to find exactly **when** GPs start to fail. Folk knowldege says it's around 20 dimensions, but if we sweep for several values of {{< katex >}}N{{< /katex >}} and {{< katex >}}D{{< /katex >}}, we get the following table:
 
 {{< figure src="/static/assets/hdgp_blogpost/ExactGPModel_nice_table.jpg" alt="A table showing whether the model learned anything, sweeping across number of points and dimensions" class="largeSize" title="Table - nr. of training points & input dimension, and whether the model learned anything" >}}
 
@@ -207,12 +209,12 @@ Maximizing this quantity w.r.t. {{< katex >}}\theta{{< /katex >}} results in wha
 To encourage larger lengthscales, we can add a prior distribution for the lengthscales, and try to maximize the *a posteriori* distribution {{< katex >}}p(\theta|\bm{y}, \bm{x}_1,\dots,\bm{x}_N){{< /katex >}}, which is proportional to the product of the likelihood {{< katex >}}p(\bm{y}| \bm{x}_1,\dots,\bm{x}_N, \theta){{< /katex >}} and the prior {{< katex >}}p(\theta){{< /katex >}}. The new function we would try to maximize would then be:
 
 {{< katex display >}}
-\underbrace{-\frac{1}{2}\mathbf{y}^T(K + \sigma_n^2I)^{-1}\mathbf{y} - \frac{1}{2}\log\det(K + \sigma_n^2I) - \frac{n}{2}\log(2\pi)}_{\text{The usual marginal log-likelihood}} - \underbrace{\sum_{i=1}^D\log p(\lambda_i)}_{\text{Regularizer}}.
+\underbrace{-\frac{1}{2}\mathbf{y}^T(K + \sigma_n^2I)^{-1}\mathbf{y} - \frac{1}{2}\log\det(K + \sigma_n^2I) - \frac{n}{2}\log(2\pi)}_{\text{The usual marginal log-likelihood}} - \underbrace{\sum_{i=1}^D\log p(\theta)}_{\text{Regularizer}}.
 {{< /katex >}}
 
 Maximizing this renders the *Maximum a posteriori* (MAP) estimate. Tools like `GPyTorch` allow us to add these regularizers easily using keyword arguments of kernels.
 
-This was all just a fancy way of saying "add a term to your loss that encourages large lengthscales". Phrasing this in a probabilistic language is useful, because we can be more precise about which values we'd like our lengthscales to take by thinking of them as _distributions_.
+To summarize, saying "I'm using MAP estimation" is just a fancy way of saying "I'm adding a term to my loss to encourage a certain behavior in my kernel hyperparameters". Phrasing this in a probabilistic language is useful, because we can be more precise about which values we'd like our lengthscales to take by thinking of them as _distributions_.
 
 ## Some priors for likelihoods
 
@@ -274,6 +276,8 @@ Now we can fit up to 512 dimensions easily! With enough data, we might be able t
 
 # Conclusion
 
-Recent research seems to show that vanilla Gaussian Processes are actually capable of going beyond the folk 20-ish dimensions limit. In this blogpost I explored the toy-est of toy examples, and showed you how even a simple polynomial function can't be fitted by Gaussian Process Regression in high dimensions. As [Hvarfner et al.](https://arxiv.org/abs/2402.02229) recognize, this might be a problem with the lengthscales and the assumed complexity of the functions we're fitting.
+Recent research seems to show that vanilla Gaussian Processes are actually capable of going beyond the folk 20-ish dimensions limit. In this blogpost I explored the toy-est of toy examples, and showed you how even a simple polynomial function can't be fitted by vanilla Gaussian Process Regression in high dimensions.
 
-I discussed these results with a colleague, and he asked a natural question: what's stopping us, then, from having GPs fit in {{< katex >}}D>10000{{< /katex >}} dimensions? Are there any further limitations of exact GP inference (besides, of course, training dataset sizes)?
+As [Hvarfner et al.](https://arxiv.org/abs/2402.02229) recognize, this might be a problem with the lengthscales and the assumed complexity of the functions we're fitting. Incorporating a prior on the lengthscales, as they propose, allows exact GP regression to fit our higher dimensional toy problem.
+
+I discussed these results with [Joachim](https://scholar.google.com/citations?user=QVN3iv8AAAAJ&hl=en), a colleague, and he asked a natural question: what's stopping us, then, from having GPs fit in {{< katex >}}D>10000{{< /katex >}} dimensions? Are there any more inherent limitations of exact GP inference (besides, of course, training dataset sizes)?
