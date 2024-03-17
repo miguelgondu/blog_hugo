@@ -17,7 +17,7 @@ markup:
 params:
   description: "Miguel's blog about machine learning and other stuff"
   images:
-  - /static/assets/blog_banner.jpg
+  -  static/assets/blog_banner.jpg
   social:
     github: "miguelgondu"
     linkedin: "miguelgondu"
