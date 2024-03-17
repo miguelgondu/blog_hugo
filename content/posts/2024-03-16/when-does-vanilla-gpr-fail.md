@@ -3,6 +3,9 @@ date: "2024-03-16"
 title: "Do Gaussian Processes scale well with dimension?"
 slug: how-gps-scale-with-dimension
 image: /static/assets/hdgp_blogpost/ExactGPModelWithLogNormalPrior_comparison_on_256d.jpg
+images:
+- /static/assets/hdgp_blogpost/ExactGPModelWithLogNormalPrior_comparison_on_256d.jpg
+description: Disputing folk knowledge about how Gaussian Processes scale
 ---
 
 > This blogpost assumes you're already familiarized with the basics of Gaussian Processes. Check [my previous blogpost](https://www.miguelgondu.com/blogposts/2023-07-31/intro-to-bo/) for an introduction.

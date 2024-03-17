@@ -15,6 +15,13 @@ markup:
     startLevel: 1
 
 params:
+  description: "Miguel's blog about machine learning and other stuff"
+  images:
+  - /static/assets/blog_banner.jpg
+  social:
+    github: "miguelgondu"
+    linkedin: "miguelgondu"
+    twitter: "miguelgondu"
   # (Optional, default light) Sets color theme: light, dark or auto.
   # Theme 'auto' switches between dark and light modes based on browser/os preferences
   BookTheme: "light"
