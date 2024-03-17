@@ -266,7 +266,7 @@ class ExactGPModelWithLogNormalPrior(gpytorch.models.ExactGP):
         )
 ```
 
-Adding this prior has a dramatic impact on whether the model is able to fit above 32 dimensions in the toy example discussed previously. Here're the model's predictions in, say, 512 dimensions:
+Adding this prior has a dramatic impact on whether the model is able to fit above 32 dimensions in the toy example discussed previously. Here're the model's predictions in, say, 256 dimensions:
 
 {{< figure src="/static/assets/hdgp_blogpost/ExactGPModelWithLogNormalPrior_comparison_on_256d.jpg" alt="Fitting an exact GP model with a better prior in 256 dimensions" class="largeSize" title="A good fit in high dimensions - Adding a scaling to the prior allows exact GPs to fit high dimensional data." >}}
 
