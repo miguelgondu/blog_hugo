@@ -73,7 +73,7 @@ And indeed, in the 1D case we get a pretty good fit:[^training-details]
 
 [^training-details]: (Training details) For all of these experiments, I trained these models using `gpytorch`, optimizing the hyperparameters using Adam and a learning rate of `0.05`. An additional 10% of points were sampled as a validation set, and I trained using early stopping. If you're interested in the code, write me!
 
-We can also quantify the quality of the fit by plotting the mean predicted values against the actual values for a small test set of 50 points, sampled from the same distribution and corrputed in the same way. This plot is useful, because it can be computed regardless of the input dimension:
+We can also quantify the quality of the fit by plotting the mean predicted values against the actual values for a small test set of 50 points, sampled from the same distribution and corrupted in the same way. This plot is useful, because it can be computed regardless of the input dimension:
 
 {{< figure src="/static/assets/hdgp_blogpost/comparison_shifted_sphere_1d.jpg" alt="Actual vs. predicted values in a model fitted on a 1 dimensional shifted sphere" class="largeSize" title="A good fit - predictions and actual values are highly correlated" >}}
 
