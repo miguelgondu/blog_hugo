@@ -221,11 +221,13 @@ To summarize, saying "I'm using MAP estimation" is just a fancy way of saying "I
 
 ## Some priors for likelihoods
 
-By default, `gpytorch` considers no prior on the lengthscales. `botorch`'s default `SingleTaskGP` has a {{< katex >}}\lambda_i \sim \text{Gamma}(3, 6){{< /katex>}} prior, which has an average value of {{< katex >}}\mathbb{E}[\lambda_i] = 18{{< /katex >}} and a standard deviation of around {{< katex >}}\sigma_{\lambda_i} = 10.4{{< /katex >}}. Here's the density of this prior:
+By default, `gpytorch` considers no prior on the lengthscales. `botorch`'s default `SingleTaskGP` has a {{< katex >}}\lambda_i \sim \text{Gamma}(3, 6){{< /katex>}} prior, which has an average value of {{< katex >}}\mathbb{E}[\lambda_i] = 1/2{{< /katex >}} and a standard deviation of around {{< katex >}}\sigma_{\lambda_i} = 3/6^2 \approx 0.083{{< /katex >}}. Here's the density of this prior:[^thanks-to-Johannes]
 
-{{< figure src="/static/assets/hdgp_blogpost/gamma_density.jpg" alt="A plot of the probability density function of a Gamma(3, 6)" class="largeSize" title="Density of the default lengthscale prior in botorch. It doesn't scale with the input dimensionality." >}}
+{{< figure src="/static/assets/hdgp_blogpost/gamma_density_.jpg" alt="A plot of the probability density function of a Gamma(3, 6)" class="largeSize" title="Default lengthscale prior in botorch. It places a strong priority on small lengthscales and doesn't scale with D." >}}
 
-Notice how this is entiery independent of the dimensionality of the input space. As our plot above shows, for dimensionalities above 64, the expected distances between randomly sampled points is already above 20.
+[^thanks-to-Johannes]: Johannes Dürholt identified an error in my original post, where I used loc/scale instead of loc/rate for the parametrization of the Gamma distribution. Thanks!
+
+Notice how this places a huge weight on small lengthscales, and is entiery independent of the dimensionality of the input space. As our plot above shows, for dimensionalities above 64, the expected distances between randomly sampled points is already above 20.
 
 [Hvarfner et al.](https://arxiv.org/abs/2402.02229) propose a simple prior that does depend on the dimension of the input space:
 {{< katex display >}}
