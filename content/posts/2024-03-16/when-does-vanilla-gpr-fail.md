@@ -223,7 +223,7 @@ To summarize, saying "I'm using MAP estimation" is just a fancy way of saying "I
 
 By default, `gpytorch` considers no prior on the lengthscales. `botorch`'s default `SingleTaskGP` has a {{< katex >}}\lambda_i \sim \text{Gamma}(3, 6){{< /katex>}} prior, which has an average value of {{< katex >}}\mathbb{E}[\lambda_i] = 1/2{{< /katex >}} and a standard deviation of around {{< katex >}}\sigma_{\lambda_i} = 3/6^2 \approx 0.083{{< /katex >}}. Here's the density of this prior:[^thanks-to-Johannes]
 
-{{< figure src="/static/assets/hdgp_blogpost/gamma_density_.jpg" alt="A plot of the probability density function of a Gamma(3, 6)" class="largeSize" title="Default lengthscale prior in botorch. It places a strong priority on small lengthscales and doesn't scale with D." >}}
+{{< figure src="/static/assets/hdgp_blogpost/gamma_density_.jpg" alt="A plot of the probability density function of a Gamma(3, 6)" class="largeSize" title="Default lengthscale prior in botorch. It places priority on small lengthscales and doesn't scale with D." >}}
 
 [^thanks-to-Johannes]: Johannes Dürholt identified an error in my original post, where I used loc/scale instead of loc/rate for the parametrization of the Gamma distribution. Thanks!
 
