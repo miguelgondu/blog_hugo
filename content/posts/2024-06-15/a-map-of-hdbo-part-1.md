@@ -75,25 +75,30 @@ The next section introduces a guiding example we will use for this blogpost and 
 
 One example of a discrete sequence optimization problem that is highly relevant for drug discovery is **small molecule optimization**. We could, for example, optimize small molecules such that they bind well to a certain receptor, or active site in a protein.
 
-We can represent molecules in several ways (e.g. as graphs, as 3D objects...).[^small-molecule-representation] Here, we focus on the [SELFIES representation](https://arxiv.org/abs/1905.13741). SELFIES are a follow-up on [SMILES](https://pubs.acs.org/doi/10.1021/ci00057a005), which were originally deviced as a way to represent chemical molecules as text for machines to use back in the day[^Differences-between-selfies-and-smiles]
+We can represent molecules in several ways (e.g. as graphs, as 3D objects...).[^small-molecule-representation] Here, we focus on the [SELFIES representation](https://arxiv.org/abs/1905.13741). SELFIES are a follow-up on [SMILES](https://pubs.acs.org/doi/10.1021/ci00057a005), which were originally deviced as a way to represent chemical molecules as text for machines to use back in the day.[^Differences-between-selfies-and-smiles]
 
 [^small-molecule-representation]: [Here is a survey on small molecule representations and generative modeling](https://arxiv.org/abs/2203.14500) in case you're curious. Sec. 2 discusses several different ways to represent small molecules.
 
-[^Differences-between-selfies-and-smiles]: In SMILES, the atoms are represented in the vocabulary by their symbol (including brakets for charges or non-organic elements), bonds are represented with dashes, equal signs and sharps, parenthesis are used to differentiate branches, and numbers are used to represent cyclic structures. Unfortunately, this means that several sentences composed of this vocabulary correspond to invalid or nonsensical molecules. SELFIES were then proposed to mitigate this issue.
+[^Differences-between-selfies-and-smiles]: In SMILES, the atoms are represented in the vocabulary by their symbol (including brakets for charges or non-organic elements), bonds are represented with dashes, equal signs and sharps, parenthesis are used to differentiate branches, and numbers are used to represent cyclic structures. Unfortunately, this means that several sentences composed of this vocabulary correspond to invalid or nonsensical molecules. SELFIES were then proposed to mitigate this issue. [SMILES are very much still alive, by the way.](https://www.nature.com/articles/s42256-024-00821-x)
 
 You can find the SMILES representations of e.g. aspirine by checking on PubChem:
 
-[Screenshot of pubchem, with SMILES highlighted]
+{{< figure src="/static/assets/hdbo_blogposts/a_map_part_1/aspirin_in_pubchem.png" alt="Aspirin in PubChem." class="largeSizeWithBorder" title="According to PubChem, aspirin's SMILES is CC(=O)OC1=CC=CC=C1C(=O)O." >}}
+<!-- [Screenshot of pubchem, with SMILES highlighted] -->
 
-And you can transform between SMILES and SELFIES [using the Python package `selfies`, developed by Aspuru-Guzik's lab]().
+And you can transform between SMILES and SELFIES [using the Python package `selfies`, developed by Aspuru-Guzik's lab](https://github.com/aspuru-guzik-group/selfies).
 
-In these blogposts, we will work [on the Zinc250k dataset](). [TODO: add a small description of the dataset here.]
+In these blogposts, we will work [on the Zinc250k dataset](). Zinc is a database of around 720k commercially available molecules, and it was [originally provided by Irwin and Shoichet](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1360656/). A Zinc250k is a subset of around 250k molecules, and it is used plenty when benchmarking generative modeling of molecules.
 
-Zinc250k can easily be downloaded using `TorchDrug` in several of the representations mentioned above (including, of course, as SMILES strings). We transform these SMILES into SELFIES, and store e.g. the maximum sequence length, and the entire alphabet used.[^you-can-easily-replicate-this]
+Zinc250k can easily be downloaded using `TorchDrug` in several of the representations mentioned above (including, of course, as SMILES strings). We transform these SMILES into SELFIES, and store the maximum sequence length, and the entire alphabet used (which turned out to be made of 64 tokens).[^you-can-easily-replicate-this]
 
-[^you-can-easily-replicate-this]: We have included all these pre-processing scripts [in the repository of our project (including a `conda` env that is guaranteed to build)]().
+[^you-can-easily-replicate-this]: We have included all these pre-processing scripts [in the repository of our project (including a `conda` env that is guaranteed to build)](https://github.com/MachineLearningLifeScience/hdbo_benchmark).
 
-[Img of the longest molecule, img of the smallest molecule, their SELFIES]
+{{< figure src="/static/assets/hdbo_blogposts/a_map_part_1/smallest_and_largest_molecules.jpg" alt="Smallest and largest molecules in terms of their SELFIES length." class="largeSizeWithBorder" title="Smallest and largest molecules in terms of their SELFIES tokens." >}}
+
+Here are the smallest and largest molecules w.r.t. their number of SELFIES tokens. The smallest one is `[C][=C][Branch1][C][Br][C][O][N]`, and the largest one has 70 tokens.[^largest-SELFIES] We will pad all sequences in this dataset until this maximum length using the padding token `[nop]`.
+
+[^largest-SELFIES]: The largest SELFIES in Zinc250k: `[C][N][C][=Branch1][C][=O][C][=C][Branch2][Branch1][Ring1][N][=C][N][Branch1][=C][C][C@@H1][Branch1][C][O][C][=C][C][=C][C][=C][Ring1][=Branch1][C][Branch2][Ring1][Branch1][C][C][C][C][C][Branch1][O][C][C][Branch1][Ring2][C][Ring1][=Branch1][C][Ring1][=Branch2][C][Ring1][#Branch2][=C][N][Ring2][Ring1][O][Ring2][Ring1][Branch2][N][Branch1][C][C][C][Ring2][Ring1][P][=O]`.
 
 Let me also show you the entire vocabulary that arises from this:
 
