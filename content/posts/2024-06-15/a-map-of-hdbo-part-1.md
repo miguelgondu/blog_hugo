@@ -29,15 +29,16 @@ description: Starting a map of high-dimensional Bayesian optimization (of discre
 > *I have noted the arbitrariness of Wilkins, of the unknown (or apocryphal) Chinese encyclopedist, and of the Bibliographical Institute of Brussels; obviously there is no classification of the universe that is not arbitrary and conjectural.*
 >
 > The Analytical Language of John Wilkins, by Jorge Luis Borges.
+> *Other Inquisitions 1937-1952*. Translated by Ruth L.C. Simms.
 
 
 # Introduction to the introduction
 
 <!-- [high-dimensional BO is pretty important nowadays: AutoML, self-driving labs, drug discovery, protein engineering] -->
 
-Bayesian optimization (BO) shows great promise for several tasks: It is used for [automating the development of Machine Learning models](), [building self-driving labs](), and [creating entire new families of antibiotics]().[^need-a-refresher?]
+Bayesian optimization (BO) shows great promise for several tasks: It is used for [automating the development of Machine Learning models](https://www.automl.org/automl/), [building self-driving labs](https://pubs.rsc.org/en/content/articlelanding/2022/dd/d2dd00029f), and [creating new materials](https://pubs.rsc.org/en/content/articlelanding/2023/dd/d3dd00117b).[^need-a-refresher?]
 
-[^need-a-refresher?]: If you need a refresher on Bayesian optimization, [check the blogpost I wrote a couple of months ago]().
+[^need-a-refresher?]: If you need a refresher on Bayesian optimization, [check the blogpost I wrote a couple of months ago](/blogposts/2023-07-31/intro-to-bo).
 
 These tasks often involve high-dimensional inputs with a lot of structure. Two examples: to derive a chemical compound you might modulate several variables: the pH and type of the solvent, the amount of different solutions to mix in, the temperature, the pressure... or to quickly optimize a Machine Learning model to the best accuracy possible, you might need to modulate the choice of opimizer, the learning rate, the number of layers and neurons.
 
@@ -48,7 +49,7 @@ We need, then, **high-dimensional Bayesian optimization** over highly structured
 - **Gradient information**: Using information from the gradient predicted by the underlying GP,
 - **Additive models**: Decomposing the objective function into a sum of functions with less variables,
 - **Non-linear embeddings**: Using e.g. neural networks to learn latent spaces and optimizing therein,
-- **Structured Spaces**: 
+- **Structured Spaces**: working directly with the structured representations (e.g. using tools from differential geometry, or discrete optimization).
 
 Here's a visual overview (click it for a version with links to all the references and open source implementations):
 
@@ -56,16 +57,17 @@ Here's a visual overview (click it for a version with links to all the reference
 
 **In this blogpost** and the ones that follow I will dive into this taxonomy and each of the families. The final goal is to provide a _map_ of HDBO: a comprehensive overview, tutorialized with code. This blogpost in particular presents an introduction to HDBO, and a couple of baselines. The next ones will dive into the families of the taxonomy.
 
-I want to emphasize that [I'm building on prior work done by Binois & Wycoff](), as well as [Santoni et al.'s comparison of HDBO methods](). The taxonomy shown here is an extention of what's proposed in these two papers.
+I want to emphasize that [I'm building on prior work done by Binois & Wycoff](https://arxiv.org/abs/2111.05040), as well as [Santoni et al.'s comparison of HDBO methods](https://arxiv.org/abs/2303.00890). The taxonomy shown here is an extention of what's proposed in these two papers.
 
 # Our focus: discrete sequence optimization
 
 I plan to focus this overview on **discrete sequence optimization** problems. In these, we explore a space of "words" of length {{< katex >}}L{{< /katex >}}. Of the problems mentioned above, drug discovery and protein engineering can be framed as discrete sequence optimization problems: both small molecules and proteins can be represented as sentences, as we will see later in this post.
 
-Let's formalize what we mean: consider a vocabulary of **tokens** {{< katex >}}v_1, \dots v_V{{< /katex >}}. We are trying to optimize a function {{< katex >}}f\colon\mathcal{X}_L\to\mathbb{R}{{< /katex >}} where {{< katex >}}\mathcal{X}_L = \{\bm{s} = (s_1,\dots, s_L) | s_i \in \{v_1,\dots, v_V\}\}{{< /katex >}} is the space of sentences of length {{< katex >}}L{{< /katex >}}. Our goal is finding
+Let's formalize what we mean: consider a vocabulary of **tokens** {{< katex >}}v_1, \dots v_V{{< /katex >}}. We are trying to optimize a function {{< katex >}}f\colon\mathcal{X}_L\to\mathbb{R}{{< /katex >}} where {{< katex >}}\mathcal{X}_L = \{\bm{s} = (s_1,\dots, s_L) | s_i \in \{v_1,\dots, v_V\}\}{{< /katex >}} is the space of **sentences** of length {{< katex >}}L{{< /katex >}}. Our goal is finding
 {{< katex display >}}
-\argmax_{\bm{s}\in\mathcal{X}_L} f(\bm{s})
+\argmax_{\bm{s}\in\mathcal{X}_L} f(\bm{s}),
 {{< /katex >}}
+i.e. finding the best performing sentence.
 
 The next section introduces a guiding example we will use for this blogpost and the ones that follow.
 
@@ -73,7 +75,7 @@ The next section introduces a guiding example we will use for this blogpost and 
 
 One example of a discrete sequence optimization problem that is highly relevant for drug discovery is **small molecule optimization**. We could, for example, optimize small molecules such that they bind well to a certain receptor, or active site in a protein.
 
-We can represent molecules in several ways (e.g. as graphs, as 3D objects...).[^small-molecule-representation] Here, we focus on the [SELFIES representation](). SELFIES are a follow-up on [SMILES](), which were originally deviced as a way to reprenset chemical molecules as text for [TODO: ADD].
+We can represent molecules in several ways (e.g. as graphs, as 3D objects...).[^small-molecule-representation] Here, we focus on the [SELFIES representation](https://arxiv.org/abs/1905.13741). SELFIES are a follow-up on [SMILES](https://pubs.acs.org/doi/10.1021/ci00057a005), which were originally deviced as a way to reprenset chemical molecules as text for [TODO: ADD].
 
 [^small-molecule-representation]: [Here is a nice survey on small molecule representations]() in case you're curious.
 
