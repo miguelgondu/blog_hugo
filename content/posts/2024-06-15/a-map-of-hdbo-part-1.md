@@ -75,11 +75,11 @@ The next section introduces a guiding example we will use for this blogpost and 
 
 One example of a discrete sequence optimization problem that is highly relevant for drug discovery is **small molecule optimization**. We could, for example, optimize small molecules such that they bind well to a certain receptor, or active site in a protein.
 
-We can represent molecules in several ways (e.g. as graphs, as 3D objects...).[^small-molecule-representation] Here, we focus on the [SELFIES representation](https://arxiv.org/abs/1905.13741). SELFIES are a follow-up on [SMILES](https://pubs.acs.org/doi/10.1021/ci00057a005), which were originally deviced as a way to reprenset chemical molecules as text for [TODO: ADD].
+We can represent molecules in several ways (e.g. as graphs, as 3D objects...).[^small-molecule-representation] Here, we focus on the [SELFIES representation](https://arxiv.org/abs/1905.13741). SELFIES are a follow-up on [SMILES](https://pubs.acs.org/doi/10.1021/ci00057a005), which were originally deviced as a way to represent chemical molecules as text for machines to use back in the day[^Differences-between-selfies-and-smiles]
 
-[^small-molecule-representation]: [Here is a nice survey on small molecule representations]() in case you're curious.
+[^small-molecule-representation]: [Here is a survey on small molecule representations and generative modeling](https://arxiv.org/abs/2203.14500) in case you're curious. Sec. 2 discusses several different ways to represent small molecules.
 
-The problem with SMILES that not all sequences correspond to valid molecules. SELFIES mitigates this issue by [TODO: add].
+[^Differences-between-selfies-and-smiles]: In SMILES, the atoms are represented in the vocabulary by their symbol (including brakets for charges or non-organic elements), bonds are represented with dashes, equal signs and sharps, parenthesis are used to differentiate branches, and numbers are used to represent cyclic structures. Unfortunately, this means that several sentences composed of this vocabulary correspond to invalid or nonsensical molecules. SELFIES were then proposed to mitigate this issue.
 
 You can find the SMILES representations of e.g. aspirine by checking on PubChem:
 
