@@ -1,6 +1,6 @@
 ---
 date: "2024-06-21"
-title: "A map of high-dimensional Bayesian optimization: introduction"
+title: "A map of high-dimensional Bayesian optimization"
 slug: a-map-part-1
 images:
 - static/assets/hdbo_blogposts/a_map_part_1/hdbo_pie.jpg
@@ -32,7 +32,7 @@ description: Starting a map of high-dimensional Bayesian optimization (of discre
 > *Other Inquisitions 1937-1952*. Translated by Ruth L.C. Simms.
 
 
-# Introduction to the introduction
+# Introduction
 
 <!-- [high-dimensional BO is pretty important nowadays: AutoML, self-driving labs, drug discovery, protein engineering] -->
 
@@ -40,7 +40,7 @@ Bayesian optimization (BO) shows great promise for several tasks: It is used for
 
 [^need-a-refresher?]: If you need a refresher on Bayesian optimization, [check the blogpost I wrote a couple of months ago](/blogposts/2023-07-31/intro-to-bo).
 
-These tasks often involve high-dimensional inputs with a lot of structure. Two examples: to derive a chemical compound you might modulate several variables: the pH and type of the solvent, the amount of different solutions to mix in, the temperature, the pressure... or to quickly optimize a Machine Learning model to the best accuracy possible, you might need to modulate the choice of opimizer, the learning rate, the number of layers and neurons.
+These tasks often involve high-dimensional inputs with a lot of structure. Two examples: to derive a chemical compound you need to modulate several variables at the same time: the pH and type of the solvent, the amount of different solutions to mix in, the temperature, the pressure... or to quickly optimize a Machine Learning model to the best accuracy possible, you might need to modulate the choice of opimizer, the learning rate, the number and types of layers and neurons.
 
 We need, then, **high-dimensional Bayesian optimization** over highly structured inputs. High-dimensional BO (HDBO) is a large research field, and we recently wrote a paper with an updated survey and taxonomy composed of 7 families of methods:
 - **Variable Selection**: choosing only a subset of variables and optimizing there.
@@ -55,7 +55,7 @@ Here's a visual overview (click it for a version with links to all the reference
 
 {{< figure src="/static/assets/hdbo_blogposts/a_map_part_1/hdbo_pie.jpg" alt="A timeline of high-dimensional Bayesian optimization." class="largeSize" title="A timeline and taxonomy of high-dimensional Bayesian optimization. Click it for an interactive version with links to papers and open source implementations." link="/assets/hdbo_timeline.pdf" >}}
 
-**In this blogpost** and the ones that follow I will dive into this taxonomy and each of the families. The final goal is to provide a _map_ of HDBO: a comprehensive overview, tutorialized with code. This blogpost in particular presents an introduction to HDBO, and a couple of baselines. The next ones will dive into the families of the taxonomy.
+**In this blogpost** and the ones that follow I will dive into this taxonomy and each of the families. The final goal is to provide **a map of HDBO**: a comprehensive overview, tutorialized with code. This blogpost in particular presents an introduction to HDBO, and a couple of baselines. The next ones will dive into the families of the taxonomy.
 
 I want to emphasize that [I'm building on prior work done by Binois & Wycoff](https://arxiv.org/abs/2111.05040), as well as [Santoni et al.'s comparison of HDBO methods](https://arxiv.org/abs/2303.00890). The taxonomy shown here is an extention of what's proposed in these two papers.
 
@@ -71,7 +71,9 @@ i.e. finding the best performing sentence.
 
 The next section introduces a guiding example we will use for this blogpost and the ones that follow.
 
-# A guiding high-dimensional example: small molecules
+# A guiding example: optimizing small molecules
+
+{{< figure src="/static/assets/hdbo_blogposts/a_map_part_1/random_molecules.jpg" alt="Random molecules from Zinc250k." class="largeSize">}}
 
 One example of a discrete sequence optimization problem that is highly relevant for drug discovery is **small molecule optimization**. We could, for example, optimize small molecules such that they bind well to a certain receptor, or active site in a protein.
 
