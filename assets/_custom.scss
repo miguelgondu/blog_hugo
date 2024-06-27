@@ -30,6 +30,14 @@ figure.largeSize img {
     margin-right: auto;
 }
 
+figure.largeSizeWithBorder img {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1pt solid black;
+}
+
 img.blogpostSubFigure {
     width: 100%;
     max-width: 600px;
