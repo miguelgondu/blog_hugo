@@ -140,11 +140,11 @@ We will optimize small molecules on the PMO benchmark throughout these blogposts
 <!-- [Sampling tokens at random] -->
 One of the silliest ways to optimize a black-box objective {{< katex >}}f\colon\mathcal{X}_L\to\mathbb{R}{{< /katex >}} is to consider randomly sampled sentences. Let me show you some examples of what happens when we sample random SELFIES from our alphabet:
 
-{{< figure src="/static/assets/hdbo_blogposts/a_map_part_1/molecules_sampled_at_random.jpg" alt="Random molecules sampled by the solver." class="largeSize" title="Three molecules made by concatenating 70 random SELFIES tokens together." >}}
+{{< figure src="/static/assets/hdbo_blogposts/a_map_part_1/molecules_sampled_at_random.jpg" alt="Random molecules sampled by the solver." class="largeSize" title="Three molecules made by concatenating 70 random SELFIES tokens together. Of course: they don't make any sense." >}}
 
 We can implement such a solver easily. Here we will use a framework for benchmarking black boxes I've been developing called `poli-baselines`:[^link-to-code]
 
-[^link-to-code]: All implementations in this blogpost are available online. [Click this link]().
+[^link-to-code]: All implementations in this blogpost are available online. [Click this link](https://github.com/miguelgondu/code-in-blogposts/tree/main/hdbo_blogposts/a_map_part_1).
 
 ```python
 import numpy as np
@@ -313,7 +313,7 @@ Notice that {{< katex >}}\bm{X}{{< /katex >}} is pretty large: if we flatten it,
 
 <!-- [Can vanilla BO find anything in one-hot space?] -->
 
-Still, let's build a simple Bayesian Optimization loop in this space, and see how it fairs. In particular, I will use a state-of-the-art high-dimensional Bayesian optimization method: [Hvarfner's Vanilla BO](https://arxiv.org/abs/2402.02229). I'll leave the implementation out of the main text (you can find it in the [code companion](), and I'm happy to discuss them in detail if you're interested). Here're the results in comparison:
+Still, let's build a simple Bayesian Optimization loop in this space, and see how it fairs. In particular, I will use a state-of-the-art high-dimensional Bayesian optimization method: [Hvarfner's Vanilla BO](https://arxiv.org/abs/2402.02229). I'll leave the implementation out of the main text (you can find it in the [code companion](https://github.com/miguelgondu/code-in-blogposts/tree/main/hdbo_blogposts/a_map_part_1), and I'm happy to discuss them in detail if you're interested). Here're the results in comparison:
 
 {{< figure src="/static/assets/hdbo_blogposts/a_map_part_1/joint_best_y_plot_random_sampler_discrete_hill_climbing_one_hot_bo.jpg" alt="A comparsion of the three solvers discussed in this blogpost: randomly sampling, discrete hill-climbing, and Hvarfner's vanilla BO." class="largeSize" title="Comparing Hvarfner's vanilla BO against the two other baselines." >}}
 
@@ -329,7 +329,7 @@ Here's the plan: I will start by discussing methods that explore **structured sp
 
 # Conclusion
 
-In this blogpost I briefly introduced a taxonomy of high-dimensional Bayesian optimization methods, building on the work of [Santoni et al.]() and [Binois & Wycoff](). The goal for the next blogposts is to dive deeper into the different families, building a map of high-dimensional Bayesian optimization.
+In this blogpost I briefly introduced a taxonomy of high-dimensional Bayesian optimization methods, building on the work of [Santoni et al.](https://arxiv.org/abs/2303.00890) and [Binois & Wycoff](https://arxiv.org/abs/2111.05040). The goal for the next blogposts is to dive deeper into the different families, building a map of high-dimensional Bayesian optimization.
 
 Small molecules can be represented as discrete sequences (be it as SELFIES or as SMILES strings), and we will use them as a guiding example while we build this map.
 
