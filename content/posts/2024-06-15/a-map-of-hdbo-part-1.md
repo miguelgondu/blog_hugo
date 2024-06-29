@@ -201,9 +201,9 @@ Let's try to optimize one of the black-boxes inside PMO: finding a molecule that
 To keep testing homogeneous, let's give every algorithm we will test in these blogposts the same evaluation budget, as well as the same initialization and max. runtime.
 
 ```python
-from poli.repository import DRD2BlackBox
+from poli.repository import AlbuterolSimilarityBlackBox
 
-black_box = DRD2BlackBox(string_representation="SELFIES")
+black_box = AlbuterolSimilarityBlackBox(string_representation="SELFIES")
 alphabet = load_alphabet()
 max_sequence_length = 70
 seed = 42
