@@ -1,0 +1,38 @@
+baseURL = "https://miguelgondu.com/"
+title = "miguelgondu's blog"
+theme = "hugo-book"
+
+# Book configuration
+disablePathToLower = true
+enableGitInfo = true
+
+# Needed for mermaid/katex shortcodes
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.tableOfContents]
+    startLevel = 1
+
+[params]
+  description = "Miguel's blog about machine learning and other stuff"
+  images = ["static/blog_banner.jpg"]
+  [params.social]
+    github = "miguelgondu"
+    linkedin = "miguelgondu"
+    twitter = "miguelgondu"
+  BookTheme = "light"
+  BookToC = true
+  # BookFavicon = "favicon.png"
+  # BookLogo = "/logo.png"
+  # BookMenuBundle = "/menu"
+
+# Quarto
+ignoreFiles = ["\\.qmd$", "\\.ipynb$", "\\.py$"]
+
+[permalinks]
+  [permalinks.page]
+    posts = "/blogposts/:year-:month-:day/:filename/"
+  [permalinks.section]
+    posts = "/blogposts/"
+
