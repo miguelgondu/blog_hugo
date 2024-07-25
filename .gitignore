@@ -9,3 +9,4 @@ public/
 *.bbl
 *.blg
 *.out
+/.quarto/
