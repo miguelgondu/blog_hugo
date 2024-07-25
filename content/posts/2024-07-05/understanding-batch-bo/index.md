@@ -42,7 +42,6 @@ which has four optima at {{< katex >}}(\pm 1.349..., \pm 1.349){{< /katex >}}. V
 
 We usually kickstart BO with either available data, or a collection of informative points. Assume we sample 10 different points at random from a SOBOL sequence[^whats-a-sobol-sequence], then one potential GP approximation using default mean and kernel choices would look like this:[^technical-details]
 
-<!-- [Image of a GP fit, highlight uncertainty] -->
 {{< figure src="/static/assets/batch_bo_blogpost/cross_in_tray_2d_gp.jpg" alt="A timeline of high-dimensional Bayesian optimization." class="largeSize" title="Some SOBOL samples used to approximate cross-in-tray for starters." >}}
 
 [^whats-a-sobol-sequence]: ...reference to SOBOL sequences.
@@ -51,7 +50,9 @@ We usually kickstart BO with either available data, or a collection of informati
 
 Let's optimize this function using sequential Bayesian optimization. For starters, we can optimize `cross-in-tray` using Thompson Sampling as an acquisition function.
 
-[Gif of TS optimization]
+<video width="600" height="auto" controls>
+    <source src="/static/assets/batch_bo_blogpost/batch_ts.mp4", type="video/mp4">
+</video>
 
 With enough samples, we can usually find a suitable optimum for `cross-in-tray`.
 
@@ -63,13 +64,13 @@ I'll now dive deeper into versions of these modifications, starting with how som
 
 Thompson sampling (TS) consists of sampling from the surrogate model {{< katex >}}\tilde{f}\sim\text{GP}(\mu, k){{< /katex >}}, and optimizing said sample. Each sample from the GP posterior renders a function that, ideally, *looks like* the objective function. Here are e.g. three samples of the objective after the first 10 SOBOL samples.
 
-[img of 3 samples]
-
 We can simply sample several different posteriors, optimize them, and use their maxima as a batch. Here's a gif showcasing this with a batch size of 5.
 
-[Gif].
+<video width="600" height="auto" controls>
+    <source src="/static/assets/batch_bo_blogpost/batch_ts.mp4", type="video/mp4">
+</video>
 
-According to [Kandasamy et al. (2017)](https://arxiv.org/abs/1705.09236), batch TS is almost just as good as sequential TS (indeed, the expected regret is equal up to a multiplicative constant which increases with the batch size). I've found people applying this version of batch TS in several settings (e.g. Chemistry and drug discovery by [Hernández-Lobato et al. 2017]()). If I remember correctly, Jacob Gardner said that they used TS in [LOL-BO](https://arxiv.org/abs/2201.11872) in the QA part of the session he had [on the GP seminar series]().
+According to [Kandasamy et al. (2017)](https://arxiv.org/abs/1705.09236), batch TS is almost just as good as sequential TS (indeed, the expected regret is equal up to a multiplicative constant which increases with the batch size). I've found people applying this version of batch TS in several settings (e.g. Chemistry and drug discovery by [Hernández-Lobato et al. 2017](https://arxiv.org/abs/1706.01825)).
 
 This is **the simplest way** to batch BO. These samples can be taken either synchronously or asynchronously and fully in parallel (something that can't be said about the other methods presented here). Let's see how it compares against other methods in our running example.
 
@@ -97,13 +98,17 @@ With this new random variable {{< katex >}}I_{b}{{< /katex >}} we can compute a 
 \alpha_{\text{qEI}}(\bm{x}^{(1)},\dots,\bm{x}^{(b)}; f, \mathcal{D}) = \mathbb{E}_{f(\bm{x}^{(1)}), \dots, f(\bm{x}^{(B)})\sim\text{GP post.}}\left[I_b(\bm{x}^{(1)}, \dots, \bm{x}^{(B)};f, \mathcal{D})\right],
 {{< /katex >}}
 
-Quick question: Is it easy to compute this quantity analytically? The answer is **very much no**. [Ginsbourger et al.]() devote 4 pages of their paper to the case where {{< katex >}}B = 2{{< /katex >}}. Even numerically, we would need to search for all the elements in the batch simultaneously, converting the search space from {{< katex >}}\mathbb{R}^D{{< /katex >}} to {{< katex >}}\mathbb{R}^D\times\dots\times \mathbb{R}^D = \mathbb{R}^{BD}{{< /katex >}}. Big no-no, since scaling GPs to high input dimensions is not easy.
+Quick question: Is it easy to compute this quantity analytically? The answer is **very much no**. [Ginsbourger et al.]() devote 4 pages of their paper to the case where {{< katex >}}B = 2{{< /katex >}}. Even numerically, we would need to search for all the elements in the batch simultaneously, converting the search space from {{< katex >}}\mathbb{R}^D{{< /katex >}} to {{< katex >}}\mathbb{R}^D\times\dots\times \mathbb{R}^D = \mathbb{R}^{BD}{{< /katex >}}. From a first glance this space might seem pretty big, but it might be possible to optimize directly in it using gradient methods.[^BoTorch-seems-to-do-it]
 
-The original authors propose two approximations of this expected value in a pseudo-sequential manner. They're called the *Kriging Believer* (KB) and the *constant liar* (CL) heuristics. In both, we construct the batch by sequentially computing EI, finding its maximum, and "simulating" the acquisition function by either replacing it with what the GP predicts in KB, or with a constant in CL.
+[^BoTorch-seems-to-do-it]: According to [their documentation](), `botorch` actually optimizes in this large space for all their batch versions of acquisition functions by default; you can disable this behavior to go into what we discuss at the moment.
 
-Here's a gif showcasing qEI:
+The original authors propose two heuristics for approximating this expected value in a pseudo-sequential manner. They're called the *Kriging Believer* (KB) and the *constant liar* (CL). In both, we construct the batch by sequentially computing EI, finding its maximum, and "simulating" the objective function by either assuming that the GP prediction is correct, or by assuming it's always a constant value chosen beforehand.
 
-[Gif]
+Here's a gif showcasing qEI using the constant liar heuristic:
+
+<video width="600" height="auto" controls>
+    <source src="/static/assets/batch_bo_blogpost/q_ei.mp4", type="video/mp4">
+</video>
 
 [Discuss comparison with batch TS]
 
