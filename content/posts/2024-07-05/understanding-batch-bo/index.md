@@ -7,15 +7,13 @@ images:
 description: A brief introduction to batch Bayesian optimization, comparing it against CMA-ES
 ---
 
-By its nature, Bayesian optimization is _sequential_, evaluating the potential of 1 point in input space at a time. This is rather unfortunate, because several problems out there are well suited for evaluating large batches at once. Think for example of Reinforcement learning traces: an agent can be trained on several runs at the same time using e.g. [Isaac Gym]() or [Brax](). Other examples come from biology and chemistry, where practitioners evaluate their assays in plates that can hold up to 96 "experiments" at the same time.[^an-example]
+By its nature, Bayesian optimization is _sequential_, evaluating the potential of 1 point in input space at a time. This is rather unfortunate, because several problems out there are well suited for evaluating large batches at once. Think for example of Reinforcement learning environments: an agent can be trained on several runs at the same time using e.g. [Isaac Gym]() or [Brax](). Other examples come from biology and chemistry, where practitioners evaluate their assays in plates that can hold up to 96 "experiments" at the same time.[^an-example]
 
 [^an-example]: Check [this paper]() and [this technology]().
 
-Since there's a big practical need for batching BO, several methods have been proposed since the 2000s. In this blogpost
-I explain some of them, explore the tools already available in frameworks like `BoTorch`, and compare against the default
-choice for evolutionary strategies (another black-box optimization technique which _is meant_ to work on batches, or populations).
-
 [Image of a plate, or image of several robots being trained with caption: sometimes we can parallelize the evaluation of our objective.]
+
+Since there's a big practical need for batching BO, several methods have been proposed since the 2000s. In this blogpost I explain some of them, explore the tools already available in frameworks like `botorch`, and compare against the default choice for evolutionary strategies: CMA-ES.
 
 The code used for this blogpost is shared on [the code companion](). To keep things interesting, I'll implement most of this blogpost in `jax`.
 
@@ -50,9 +48,7 @@ We usually kickstart BO with either available data, or a collection of informati
 
 Let's optimize this function using sequential Bayesian optimization. For starters, we can optimize `cross-in-tray` using Thompson Sampling as an acquisition function.
 
-<video width="600" height="auto" controls>
-    <source src="/static/assets/batch_bo_blogpost/batch_ts.mp4", type="video/mp4">
-</video>
+[gif]
 
 With enough samples, we can usually find a suitable optimum for `cross-in-tray`.
 
@@ -64,7 +60,7 @@ I'll now dive deeper into versions of these modifications, starting with how som
 
 Thompson sampling (TS) consists of sampling from the surrogate model {{< katex >}}\tilde{f}\sim\text{GP}(\mu, k){{< /katex >}}, and optimizing said sample. Each sample from the GP posterior renders a function that, ideally, *looks like* the objective function. Here are e.g. three samples of the objective after the first 10 SOBOL samples.
 
-We can simply sample several different posteriors, optimize them, and use their maxima as a batch. Here's a gif showcasing this with a batch size of 5.
+We can simply sample several different posteriors, optimize them, and use their maxima as a batch. Here's a gif showcasing this with a batch size of 6.
 
 <video width="600" height="auto" controls>
     <source src="/static/assets/batch_bo_blogpost/batch_ts.mp4", type="video/mp4">
@@ -76,7 +72,9 @@ This is **the simplest way** to batch BO. These samples can be taken either sync
 
 However, TS might get stuck on local optima depending on our prior of the outputscale/global noise.
 
-# Batch versions of other acquisition functions
+# Pseudo-sequential methods
+
+## The original batch expected improvement (qEI)
 
 To motivate this section, let's remember how we define Expected Improvement. If {{< katex >}}f\sim\text{GP}(\mu, k){{< /katex >}}, then we can quantify how promising a new point {{< katex >}}\bm{x}{{< /katex >}} by how much we expect it to improve on the current best value {{< katex >}}f(x_{\text{best}}){{< /katex >}}:
 
@@ -98,31 +96,49 @@ With this new random variable {{< katex >}}I_{b}{{< /katex >}} we can compute a 
 \alpha_{\text{qEI}}(\bm{x}^{(1)},\dots,\bm{x}^{(b)}; f, \mathcal{D}) = \mathbb{E}_{f(\bm{x}^{(1)}), \dots, f(\bm{x}^{(B)})\sim\text{GP post.}}\left[I_b(\bm{x}^{(1)}, \dots, \bm{x}^{(B)};f, \mathcal{D})\right],
 {{< /katex >}}
 
-Quick question: Is it easy to compute this quantity analytically? The answer is **very much no**. [Ginsbourger et al.]() devote 4 pages of their paper to the case where {{< katex >}}B = 2{{< /katex >}}. Even numerically, we would need to search for all the elements in the batch simultaneously, converting the search space from {{< katex >}}\mathbb{R}^D{{< /katex >}} to {{< katex >}}\mathbb{R}^D\times\dots\times \mathbb{R}^D = \mathbb{R}^{BD}{{< /katex >}}. From a first glance this space might seem pretty big, but it might be possible to optimize directly in it using gradient methods.[^BoTorch-seems-to-do-it]
+Quick question: Is it easy to compute this quantity analytically? The answer is **very much no**. [Ginsbourger et al.]() devote 4 pages of their paper to the case where {{< katex >}}B = 2{{< /katex >}}. Even numerically, we would need to search for all the elements in the batch simultaneously, converting the search space from {{< katex >}}\mathbb{R}^D{{< /katex >}} to {{< katex >}}\mathbb{R}^D\times\dots\times \mathbb{R}^D = \mathbb{R}^{BD}{{< /katex >}}. From a first glance this space might seem pretty big, but it is possible to optimize directly in it using gradient methods as we will see later (indeed, we fit neural networks in spaces much, much larger).[^BoTorch-seems-to-do-it]
 
 [^BoTorch-seems-to-do-it]: According to [their documentation](), `botorch` actually optimizes in this large space for all their batch versions of acquisition functions by default; you can disable this behavior to go into what we discuss at the moment.
 
 The original authors propose two heuristics for approximating this expected value in a pseudo-sequential manner. They're called the *Kriging Believer* (KB) and the *constant liar* (CL). In both, we construct the batch by sequentially computing EI, finding its maximum, and "simulating" the objective function by either assuming that the GP prediction is correct, or by assuming it's always a constant value chosen beforehand.
 
-Here's a gif showcasing qEI using the constant liar heuristic:
+Here's a gif showcasing qEI using the constant liar heuristic, replacing the maximum of the acquisition function with the worst performing element of the dataset:
 
 <video width="600" height="auto" controls>
     <source src="/static/assets/batch_bo_blogpost/q_ei.mp4", type="video/mp4">
 </video>
 
-[Discuss comparison with batch TS]
+Comparing with batch TS, it is evident that the original presentation of qEI **is much slower and requires many more model fits**. One needs to update the surrogate model for each element in the batch. A slightly faster way of doing it would be to optimize all the elements in the batch at the same time, like `botorch` does.[^BoTorch-seems-to-do-it] Still, remember that we are defining the quality of the batch to be the predicted performance of the best element in it.
+
+## Batch UCB
+
+<!-- - Parallelizing exploration-exploitation tradeoffs in gaussian process bandit optimization -->
+
+Similarly, but for the Upper Confidence Bound, [Desautels et al.]() realized you don't need to evaluate the objective to compute the posterior variance[^the-formula]. So one could iteratively update _only_ the posterior variance and use UCB to construct a batch in a pseudo-sequential way. This, the authors call GP-BUCB.
+
+[^the-formula]: Remember that the posterior variance is given by ...
+
+Put in pseudocode, GP-BUCB looks like this: Given the current dataset {{< katex >}}\mathcal{D}{{< /katex >}}, compute the GP posterior with predictive mean and standard deviation {{< katex >}}\mu_{\mathcal{D}}(\bm{x}), \sigma_{\mathcal{D}}(\bm{x}){{< /katex >}} and construct the batch as follows:
+
+0. Initialize an empty batch {{< katex >}}\mathcal{B} = \varnothing{{< /katex >}}.
+1. Optimize the upper confidence bound at {{< katex >}}\mathcal{D} \cup \mathcal{B}{{< /katex >}}: {{< katex >}}\alpha_{\text{UCB}}(\bm{x}) = \mu_{\mathcal{D}\cup \mathcal{B}}(\bm{x}) + \beta \sigma_{\mathcal{D}\cup\mathcal{B}}(\bm{x}){{< /katex >}}, arriving at {{< katex >}}\bm{x}_{\text{next}}{{< /katex >}}.
+2. Append {{< katex >}}(\bm{x}_{\text{next}}, \mu_{\mathcal{D}}(\bm{x}_{\text{next}})){{< /katex >}} to the batch {{< katex >}}\mathcal{B}{{< /katex >}}. In other words, hallucinate that the output at the next point is what the GP predicts on \mathcal{D}. _Believe_ in the original kriging.
+3. Go back to point 0. until {{< katex >}}\mathcal{B}{{< /katex >}} is full.
 
 # Penalizing locality (González et al.)
 - Local penalization work by Javier G.
-
-# Batch UCB
-- Parallelizing exploration-exploitation tradeoffs in gaussian process bandit optimization
 
 # `TuRBO` was meant to be parallel
 - The turbo paper
 
 # Methods that vary the batch size dynamically
 - hybrid, budgeted
+
+# Contemporary batching of acquisition functions
+
+This original way of batching expected improvement is no longer the default way in which contemporary frameworks do it.
+
+- the reparametrization trick for acquisition functions by Wilson et al.
 
 # Some simple comparisons
 
