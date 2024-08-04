@@ -66,7 +66,7 @@ We can simply sample several different posteriors, optimize them, and use their 
     <source src="/static/assets/batch_bo_blogpost/batch_ts.mp4", type="video/mp4">
 </video>
 
-According to [Kandasamy et al. (2017)](https://arxiv.org/abs/1705.09236), batch TS is almost just as good as sequential TS (indeed, the expected regret is equal up to a multiplicative constant which increases with the batch size). I've found people applying this version of batch TS in several settings (e.g. Chemistry and drug discovery by [Hernández-Lobato et al. 2017](https://arxiv.org/abs/1706.01825)).
+According to [Kandasamy et al. (2017)](https://arxiv.org/abs/1705.09236), batch TS is almost just as good as sequential TS (indeed, the expected regret is equal up to a multiplicative constant which increases with the batch size). I've found people applying this version of batch TS in several settings (e.g. Chemistry and drug discovery by [Hernández-Lobato et al. 2017](https://arxiv.org/abs/1706.01825)). One important example is `TuRBO` by [Eriksson et al.](), a competitive alternative for high-dimensional Bayesian optimization which uses trust regions for optimizing the acquisition function.
 
 This is **the simplest way** to batch BO. These samples can be taken either synchronously or asynchronously and fully in parallel (something that can't be said about the other methods presented here). Let's see how it compares against other methods in our running example.
 
@@ -114,7 +114,7 @@ Comparing with batch TS, it is evident that the original presentation of qEI **i
 
 <!-- - Parallelizing exploration-exploitation tradeoffs in gaussian process bandit optimization -->
 
-Similarly, but for the Upper Confidence Bound, [Desautels et al.]() realized you don't need to evaluate the objective to compute the posterior variance[^the-formula]. So one could iteratively update _only_ the posterior variance and use UCB to construct a batch in a pseudo-sequential way. This, the authors call GP-BUCB.
+Similarly, but for the Upper Confidence Bound, [Desautels et al.]() realized you don't need to evaluate the objective to compute the posterior variance[^the-formula]. So one could iteratively update _only_ the posterior variance and use UCB to construct a batch in a pseudo-sequential way. The authors call this GP-BUCB.
 
 [^the-formula]: Remember that the posterior variance is given by ...
 
@@ -125,13 +125,38 @@ Put in pseudocode, GP-BUCB looks like this: Given the current dataset {{< katex 
 2. Append {{< katex >}}(\bm{x}_{\text{next}}, \mu_{\mathcal{D}}(\bm{x}_{\text{next}})){{< /katex >}} to the batch {{< katex >}}\mathcal{B}{{< /katex >}}. In other words, hallucinate that the output at the next point is what the GP predicts on \mathcal{D}. _Believe_ in the original kriging.
 3. Go back to point 0. until {{< katex >}}\mathcal{B}{{< /katex >}} is full.
 
-# Penalizing locality (González et al.)
-- Local penalization work by Javier G.
+Here's a video showing the selection of this batch in our running example:
 
-# `TuRBO` was meant to be parallel
-- The turbo paper
+[gif]
+
+## Penalizing locality (González et al.)
+
+[González et al.]() propose another way of building a batch pseudo-sequentially. At each iteration, the original acquisition function {{< katex >}}\alpha{{< /katex >}} is optimized arriving at a next candidate {{< katex >}}\bm{x}_{b_1}{{< /katex >}}. It would be ideal to **penalize** the acquisition function **locally** around this point, to see where other local maxima of the acquisition function lie.
+
+[Fig. from the paper]
+
+A **local penalizer** around a point {{< katex >}}\bm{x}_{b_i}{{< /katex >}} is defined as a function {{< katex >}}\varphi_{\bm{x}_{b_i}}(\bm{x}){{< /katex >}} bounded between 0 and 1 that is non-decreasing on the distance to $\bm{x}_{b_i}$.
+
+The particular penalizers González et al propose are defined as
+{{< katex display >}}
+\begin{array}{rl}
+\varphi_{b_i}(\bm{x}) &= \text{Prob}[\bm{x}\text{ is not close to }\bm{x}_{b_i}] \\
+&= \text{Prob}[\bm{x}\notin B_{r_i}(\bm{x}_{b_i})] \\
+&= 1 - \text{Prob}[\bm{x}\in B_{r_i}(\bm{x}_{b_i})]
+\end{array}
+{{< /katex >}}
+where {{< katex >}}B_{r_i}(\bm{x}_{b_i}){{< /katex >}} is the ball of radius {{< katex >}}r_i = (f_\text{best so far} - f(\bm{x}_{b_i})) / L{{< /katex >}}, and {{< katex >}}L{{< /katex >}} is a Lipschitz constant. {{< katex >}}\varphi_{b_i}(\bm{x}){{< /katex >}} can be computed in closed form, but we'll skip the technical details for now. Check the footnotes if you're curious.[^the-details-on-penalizer]
+
+[^the-details-on-penalizer]: ...
+
+As a brief reminder of what we mean by a Lipschitz constant: we say that a function is **Lipschitz** (with constant {{< katex >}}L{{< /katex >}}) if... If the function is differentiable, then the smallest Lipschitz constant is given by {{< katex >}}\nabla f{{< /katex >}}. In this paper, we approximate this gradient using what the GP predicts.[^gradient-of-gps]
+
+[^gradient-of-gps]: GPs are great because they also allow us to make statements about the derivative of the function we're approximating [TODO:ADD]. 
+
+It's a little bit non-trivial to implement this in GPJax at the moment, since they haven't implemented gradient derivatives yet. We leave the comparison of this method in particular as an exercise to the reader.
 
 # Methods that vary the batch size dynamically
+
 - hybrid, budgeted
 
 # Contemporary batching of acquisition functions
