@@ -155,6 +155,8 @@ As a brief reminder of what we mean by a Lipschitz constant: we say that a funct
 
 It's a little bit non-trivial to implement this in GPJax at the moment, since they haven't implemented gradient derivatives yet. We leave the comparison of this method in particular as an exercise to the reader.
 
+One small comment: this is not the only penalizer one might construct around the current batch point. It's a nice one, in the sense that it is theoretically justified by the Lipschitz assumption. However, one could easily think of a generalization using functions with compact support.
+
 # Methods that vary the batch size dynamically
 
 - hybrid, budgeted
