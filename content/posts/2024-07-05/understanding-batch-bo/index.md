@@ -7,7 +7,7 @@ images:
 description: A brief introduction to batch Bayesian optimization, comparing it against CMA-ES
 ---
 
-By its nature, Bayesian optimization is _sequential_, evaluating the potential of 1 point in input space at a time. This is rather unfortunate, because several problems out there are well suited for evaluating large batches at once. Think for example of Reinforcement learning environments: an agent can be trained on several runs at the same time using e.g. [Isaac Gym]() or [Brax](). Other examples come from biology and chemistry, where practitioners evaluate their assays in plates that can hold up to 96 "experiments" at the same time.[^an-example]
+By its nature, Bayesian optimization is _sequential_, evaluating 1 potentially good point in input space at a time. This is rather unfortunate, because several problems out there are well suited for evaluating large batches at once. Think for example of Reinforcement learning environments: an agent can be trained on several runs at the same time using e.g. [Isaac Gym]() or [Brax](). Other examples come from biology and chemistry, where practitioners evaluate their assays in plates that can hold up to 96 "experiments" at the same time.[^an-example]
 
 [^an-example]: Check [this paper]() and [this technology]().
 
@@ -26,7 +26,7 @@ There are three ingredients in BO:
 - A surrogate model (usually Gaussian Process Regression) of the objective function {{< katex >}}\tilde{f}\sim\text{GP}(\mu, k){{< /katex >}}.
 - An acquisition function {{< katex >}}\alpha(\bm{x};\tilde{f}){{< /katex >}} which uses the approximation of the objective function to propose new points to evaluate in. Acquisition functions are maximized at points {{< katex >}}\bm{x}\in\mathbb{R}^D{{< /katex >}} that have potential to maximize the objective.
 
-With these three ingredients, we optimize the objective function {{< katex >}}f{{< /katex >}} **sequentially** by querying the best point {{< katex >}}x_{\text{best}}{{< /katex >}} according to the acquisition function {{< katex >}}\alpha{{< /katex >}}, and adding the pair {{< katex >}}(x_{\text{best}}, f(x_{\text{best}})){{< /katex >}} to the dataset.
+With these three ingredients, we optimize the objective function {{< katex >}}f{{< /katex >}} **sequentially** by querying the best point {{< katex >}}x_{\text{next}}{{< /katex >}} according to the acquisition function {{< katex >}}\alpha{{< /katex >}}, and adding the pair {{< katex >}}(x_{\text{next}}, f(x_{\text{next}})){{< /katex >}} to the dataset.
 
 Consider a two-dimensional example given by e.g. `cross-in-tray` with noisy observations. The original function is given by[^reference-to-toy-cont] 
 {{< katex display >}}
@@ -36,7 +36,7 @@ which has four optima at {{< katex >}}(\pm 1.349..., \pm 1.349){{< /katex >}}. V
 
 {{< figure src="/static/assets/batch_bo_blogpost/cross_in_tray_2d.jpg" alt="A timeline of high-dimensional Bayesian optimization." class="largeSize" title="Cross-in-tray as a surface, and as a contour plot. x marks the spot(s)." >}}
 
-[^reference-to-toy-cont]: More of these can be found [here]().
+[^reference-to-toy-cont]: Taken from [here]().
 
 We usually kickstart BO with either available data, or a collection of informative points. Assume we sample 10 different points at random from a SOBOL sequence[^whats-a-sobol-sequence], then one potential GP approximation using default mean and kernel choices would look like this:[^technical-details]
 
@@ -52,13 +52,15 @@ Let's optimize this function using sequential Bayesian optimization. For starter
 
 With enough samples, we can usually find a suitable optimum for `cross-in-tray`.
 
-As we have described it so far, this framework only allows us to query a single point {{< katex >}}x_{\text{best}}{{< /katex >}} at each iteration. The main reason: we choose to focus on the maximum of the acquisition function. To opimize in a batch, it's necessary to either (i) consider a different acquisition function that works on batches instead of single points, or (ii) squeeze more information out of the acquisition functions we have already defined.
+As we have described it so far, this framework only allows us to query a single point {{< katex >}}x_{\text{next}}{{< /katex >}} at each iteration. The main reason: we choose to focus on the maximum of the acquisition function. To opimize in a batch, it's necessary to either (i) consider a different acquisition function that works on batches instead of single points, or (ii) squeeze more information out of the acquisition functions we have already defined.
 
 I'll now dive deeper into versions of these modifications, starting with how some acq. functions are easily parallelizable, following up with batch versions of acq. functions, and finishing with alternatives that modify the acq. functions we already have.
 
 # Easy batching with Thompson sampling
 
-Thompson sampling (TS) consists of sampling from the surrogate model {{< katex >}}\tilde{f}\sim\text{GP}(\mu, k){{< /katex >}}, and optimizing said sample. Each sample from the GP posterior renders a function that, ideally, *looks like* the objective function. Here are e.g. three samples of the objective after the first 10 SOBOL samples.
+Thompson sampling (TS) consists of sampling from the surrogate model {{< katex >}}\tilde{f}\sim\text{GP}(\mu, k){{< /katex >}}, and optimizing said sample. Each sample from the GP posterior renders a function that *looks like* the objective function. Here are three samples of the objective after the first 10 SOBOL samples.
+
+[Three samples in 2 and 3d]
 
 We can simply sample several different posteriors, optimize them, and use their maxima as a batch. Here's a gif showcasing this with a batch size of 6.
 
@@ -96,7 +98,7 @@ With this new random variable {{< katex >}}I_{b}{{< /katex >}} we can compute a 
 \alpha_{\text{qEI}}(\bm{x}^{(1)},\dots,\bm{x}^{(b)}; f, \mathcal{D}) = \mathbb{E}_{f(\bm{x}^{(1)}), \dots, f(\bm{x}^{(B)})\sim\text{GP post.}}\left[I_b(\bm{x}^{(1)}, \dots, \bm{x}^{(B)};f, \mathcal{D})\right],
 {{< /katex >}}
 
-Quick question: Is it easy to compute this quantity analytically? The answer is **very much no**. [Ginsbourger et al.]() devote 4 pages of their paper to the case where {{< katex >}}B = 2{{< /katex >}}. Even numerically, we would need to search for all the elements in the batch simultaneously, converting the search space from {{< katex >}}\mathbb{R}^D{{< /katex >}} to {{< katex >}}\mathbb{R}^D\times\dots\times \mathbb{R}^D = \mathbb{R}^{BD}{{< /katex >}}. From a first glance this space might seem pretty big, but it is possible to optimize directly in it using gradient methods as we will see later (indeed, we fit neural networks in spaces much, much larger).[^BoTorch-seems-to-do-it]
+Quick question: Is it easy to compute this quantity analytically? The answer is **very much no**. [Ginsbourger et al.]() devote 4 pages of their paper to the case where {{< katex >}}B = 2{{< /katex >}}. Numerically, we would need to search for all the elements in the batch simultaneously, converting the search space from {{< katex >}}\mathbb{R}^D{{< /katex >}} to {{< katex >}}\mathbb{R}^D\times\dots\times \mathbb{R}^D = \mathbb{R}^{BD}{{< /katex >}}. From a first glance this space might seem pretty big, but it is possible to optimize directly in it using gradient methods as we will see later (indeed, we fit neural networks in spaces much, much larger).[^BoTorch-seems-to-do-it]
 
 [^BoTorch-seems-to-do-it]: According to [their documentation](), `botorch` actually optimizes in this large space for all their batch versions of acquisition functions by default; you can disable this behavior to go into what we discuss at the moment.
 
@@ -123,7 +125,7 @@ Put in pseudocode, GP-BUCB looks like this: Given the current dataset {{< katex 
 0. Initialize an empty batch {{< katex >}}\mathcal{B} = \varnothing{{< /katex >}}.
 1. Optimize the upper confidence bound at {{< katex >}}\mathcal{D} \cup \mathcal{B}{{< /katex >}}: {{< katex >}}\alpha_{\text{UCB}}(\bm{x}) = \mu_{\mathcal{D}\cup \mathcal{B}}(\bm{x}) + \beta \sigma_{\mathcal{D}\cup\mathcal{B}}(\bm{x}){{< /katex >}}, arriving at {{< katex >}}\bm{x}_{\text{next}}{{< /katex >}}.
 2. Append {{< katex >}}(\bm{x}_{\text{next}}, \mu_{\mathcal{D}}(\bm{x}_{\text{next}})){{< /katex >}} to the batch {{< katex >}}\mathcal{B}{{< /katex >}}. In other words, hallucinate that the output at the next point is what the GP predicts on \mathcal{D}. _Believe_ in the original kriging.
-3. Go back to point 0. until {{< katex >}}\mathcal{B}{{< /katex >}} is full.
+3. Go back to optimizing the UCB until {{< katex >}}\mathcal{B}{{< /katex >}} is full.
 
 Here's a video showing the selection of this batch in our running example:
 
@@ -153,7 +155,7 @@ As a brief reminder of what we mean by a Lipschitz constant: we say that a funct
 
 [^gradient-of-gps]: GPs are great because they also allow us to make statements about the derivative of the function we're approximating [TODO:ADD]. 
 
-It's a little bit non-trivial to implement this in GPJax at the moment, since they haven't implemented gradient derivatives yet. We leave the comparison of this method in particular as an exercise to the reader.
+It's a little bit non-trivial to implement this in GPJax at the moment, since they haven't implemented gradients of GPs yet. We leave the comparison of this method in particular as an exercise to the reader.
 
 One small comment: this is not the only penalizer one might construct around the current batch point. It's a nice one, in the sense that it is theoretically justified by the Lipschitz assumption. However, one could easily think of a generalization using functions with compact support.
 
