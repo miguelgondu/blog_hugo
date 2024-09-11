@@ -10,7 +10,7 @@ description: Disputing folk knowledge about how Gaussian Processes scale
 
 > This blogpost assumes you're already familiarized with the basics of Gaussian Processes. Check [my previous blogpost](https://www.miguelgondu.com/blogposts/2023-07-31/intro-to-bo/) for an introduction.
 
-> [Update] This blogpost now comes with a code-companion with my (very unpolished) code. [Check it here](https://github.com/miguelgondu/code-in-blogposts/tree/main/high_dimensional_gps).
+> [Update] [Here's a link to the (very unpolished) code I used for the experiments in this blogpost](https://github.com/miguelgondu/code-in-blogposts/tree/main/high_dimensional_gps).
 
 It's folk knowledge that Gaussian Processes (GPs) don't scale well with the dimensionality of their inputs.
 Some people even claim that, if the problem goes beyond 20 input dimensions, then GPs fail to do regression well.[^folk-knowledge]
