@@ -10,6 +10,8 @@ description: Disputing folk knowledge about how Gaussian Processes scale
 
 > This blogpost assumes you're already familiarized with the basics of Gaussian Processes. Check [my previous blogpost](https://www.miguelgondu.com/blogposts/2023-07-31/intro-to-bo/) for an introduction.
 
+> [Update] This blogpost now comes with a code-companion with my (very unpolished) code. [Check it here](https://github.com/miguelgondu/code-in-blogposts/tree/main/high_dimensional_gps).
+
 It's folk knowledge that Gaussian Processes (GPs) don't scale well with the dimensionality of their inputs.
 Some people even claim that, if the problem goes beyond 20 input dimensions, then GPs fail to do regression well.[^folk-knowledge]
 
@@ -71,7 +73,7 @@ And indeed, in the 1D case we get a pretty good fit:[^training-details]
 
 {{< figure src="/static/assets/hdgp_blogpost/shifted_sphere_1d.jpg" alt="A shifted sphere, approximated using a Gaussian Process" class="largeSize" title="Fitting a vanilla GP to a shifted sphere" >}}
 
-[^training-details]: (Training details) For all of these experiments, I trained these models using `gpytorch`, optimizing the hyperparameters using Adam and a learning rate of `0.05`. An additional 10% of points were sampled as a validation set, and I trained using early stopping. If you're interested in the code, write me!
+[^training-details]: (Training details) For all of these experiments, I trained these models using `gpytorch`, optimizing the hyperparameters using Adam and a learning rate of `0.05`. An additional 10% of points were sampled as a validation set, and I trained using early stopping. If you're interested in the code, [check the code companion](https://github.com/miguelgondu/code-in-blogposts/tree/main/high_dimensional_gps)!
 
 We can also quantify the quality of the fit by plotting the mean predicted values against the actual values for a small test set of 50 points, sampled from the same distribution and corrupted in the same way. This plot is useful, because it can be computed regardless of the input dimension:
 
@@ -184,7 +186,7 @@ Notice how **the average distance between randomly sampled points starts to grow
 
 ## Lengthscales, lengthscales, lengthscales
 
-Our stationary kernels should reflect this change in distance. By including lengthscales, our computation of correlation is actually mediated by hyperparameters that we tune during training. Lengthscales govern the "zone of influence" of a given training point: large values allow GPs to have higher correlation _further away_, and lower correlations mean that the zone of influence of a given training point is small, distance-wise. Fig. 2 of [Hvarfner et al. 2024](https://arxiv.org/abs/2402.02229) exemplifies this.
+Our stationary kernels should reflect this change in distance. By including lengthscales, our computation of correlation is actually mediated by hyperparameters that we tune during training. Lengthscales govern the "zone of influence" of a given training point: large values allow GPs to have higher correlation _further away_, and lower lengthscales mean that the zone of influence of a given training point is small, distance-wise. Fig. 2 of [Hvarfner et al. 2024](https://arxiv.org/abs/2402.02229) exemplifies this.
 
 {{< figure src="/static/assets/hdgp_blogpost/lengthscale_impact.png" alt="Impact of the lengthscale on GP regression, taken from Hvarfner et al 2024" class="largeSize" title="The impact of lengthscales on Gaussian Process regression. (Image source: Fig. 2 of Hvarfner et al. 2024)" >}}
 
