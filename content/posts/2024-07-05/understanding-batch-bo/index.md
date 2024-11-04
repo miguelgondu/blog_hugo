@@ -38,7 +38,7 @@ which has four optima at {{< katex >}}(\pm 1.349..., \pm 1.349){{< /katex >}}. V
 
 [^reference-to-toy-cont]: Taken from [here]().
 
-We usually kickstart BO with either available data, or a collection of informative points. Assume we sample 10 different points at random from a SOBOL sequence[^whats-a-sobol-sequence], then one potential GP approximation using default mean and kernel choices would look like this:[^technical-details]
+We usually kickstart BO with either available data, or by querying a collection of informative points. Assume we sample 10 different points at random from a SOBOL sequence[^whats-a-sobol-sequence], then one potential GP approximation using default mean and kernel choices would look like this:[^technical-details]
 
 {{< figure src="/static/assets/batch_bo_blogpost/cross_in_tray_2d_gp.jpg" alt="A timeline of high-dimensional Bayesian optimization." class="largeSize" title="Some SOBOL samples used to approximate cross-in-tray for starters." >}}
 
@@ -98,13 +98,13 @@ With this new random variable {{< katex >}}I_{b}{{< /katex >}} we can compute a 
 \alpha_{\text{qEI}}(\bm{x}^{(1)},\dots,\bm{x}^{(b)}; f, \mathcal{D}) = \mathbb{E}_{f(\bm{x}^{(1)}), \dots, f(\bm{x}^{(B)})\sim\text{GP post.}}\left[I_b(\bm{x}^{(1)}, \dots, \bm{x}^{(B)};f, \mathcal{D})\right],
 {{< /katex >}}
 
-Quick question: Is it easy to compute this quantity analytically? The answer is **very much no**. [Ginsbourger et al.]() devote 4 pages of their paper to the case where {{< katex >}}B = 2{{< /katex >}}. Numerically, we would need to search for all the elements in the batch simultaneously, converting the search space from {{< katex >}}\mathbb{R}^D{{< /katex >}} to {{< katex >}}\mathbb{R}^D\times\dots\times \mathbb{R}^D = \mathbb{R}^{BD}{{< /katex >}}. From a first glance this space might seem pretty big, but it is possible to optimize directly in it using gradient methods as we will see later (indeed, we fit neural networks in spaces much, much larger).[^BoTorch-seems-to-do-it]
+Quick question: Is it easy to compute this quantity analytically? The answer is **very much no**. [Ginsbourger et al.]() devote 4 pages of their paper to the case where {{< katex >}}B = 2{{< /katex >}}. Numerically, we would need to search for all the elements in the batch simultaneously, converting the search space from {{< katex >}}\mathbb{R}^D{{< /katex >}} to {{< katex >}}\mathbb{R}^D\times\dots\times \mathbb{R}^D = \mathbb{R}^{BD}{{< /katex >}}. At a first glance this space might seem big, but it is possible to optimize directly in it using gradient methods as we will see later (indeed, we fit neural networks in spaces much, much larger).[^BoTorch-seems-to-do-it]
 
 [^BoTorch-seems-to-do-it]: According to [their documentation](), `botorch` actually optimizes in this large space for all their batch versions of acquisition functions by default; you can disable this behavior to go into what we discuss at the moment.
 
 The original authors propose two heuristics for approximating this expected value in a pseudo-sequential manner. They're called the *Kriging Believer* (KB) and the *constant liar* (CL). In both, we construct the batch by sequentially computing EI, finding its maximum, and "simulating" the objective function by either assuming that the GP prediction is correct, or by assuming it's always a constant value chosen beforehand.
 
-Here's a gif showcasing qEI using the constant liar heuristic, replacing the maximum of the acquisition function with the worst performing element of the dataset:
+Here's a gif showcasing qEI using the constant liar heuristic, sequentially simulating that the next objective value is the worst we have seen so far (i.e. {{< katex >}}\min\{y_n\}{{< /katex >}}):
 
 <video width="600" height="auto" controls>
     <source src="/static/assets/batch_bo_blogpost/q_ei.mp4", type="video/mp4">
@@ -116,7 +116,7 @@ Comparing with batch TS, it is evident that the original presentation of qEI **i
 
 <!-- - Parallelizing exploration-exploitation tradeoffs in gaussian process bandit optimization -->
 
-Similarly, but for the Upper Confidence Bound, [Desautels et al.]() realized you don't need to evaluate the objective to compute the posterior variance[^the-formula]. So one could iteratively update _only_ the posterior variance and use UCB to construct a batch in a pseudo-sequential way. The authors call this GP-BUCB.
+Similarly, but for the Upper Confidence Bound, [Desautels et al.]() realized you don't need to evaluate the objective to compute the posterior variance of a Gaussian Process[^the-formula]. So one could iteratively update _only_ the posterior variance and use UCB to construct a batch in a pseudo-sequential way. The authors call this GP-BUCB.
 
 [^the-formula]: Remember that the posterior variance is given by ...
 
