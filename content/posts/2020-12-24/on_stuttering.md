@@ -1,6 +1,7 @@
 ---
 date: "2020-12-24"
 title: "On Stuttering"
+summary: An essay on stuttering, my experience, and a little bit about the neuroscience behind it.
 ---
 
 At the beginning of this year I was visiting a research group at another university to present my PhD thesis project. I already knew a couple members of the group, because they had already visited us here in Copenhagen. I went to their university, I met with them and we went to a meeting room to introduce me to the rest of the group.

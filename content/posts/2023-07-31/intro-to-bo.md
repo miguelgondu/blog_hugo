@@ -3,6 +3,7 @@ date: "2023-07-31"
 title: "Bayesian Optimization using Gaussian Processes: an introduction"
 slug: intro-to-bo
 image: /static/assets/bo_blogpost/bo_w_TS.gif
+summary: An introduction to Bayesian optimization using Gaussian Processes.
 ---
 
 > This blogpost is an adaptation of Chap. 3 in [my dissertation](https://www.miguelgondu.com/assets/phdthesis.pdf). Check it out if you're interested!

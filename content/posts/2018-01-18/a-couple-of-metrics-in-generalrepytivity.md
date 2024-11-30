@@ -2,6 +2,7 @@
 author: "Miguel González Duque"
 date: 2018-01-18
 title: "A couple of metrics in generalrepytivity"
+summary: A small tutorial on `generalrepytivity`, a Python package to manipulate tensors in differential geometry.
 ---
 
 # A couple of metrics in generalrepytivity

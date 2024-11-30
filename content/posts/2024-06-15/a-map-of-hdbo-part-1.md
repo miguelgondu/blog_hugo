@@ -5,6 +5,7 @@ slug: a-map-part-1
 images:
 - static/assets/hdbo_blogposts/a_map_part_1/hdbo_pie.jpg
 description: Starting a map of high-dimensional Bayesian optimization (of discrete sequences) using small molecules as a guiding example
+summary: Starting a map of high-dimensional Bayesian optimization (of discrete sequences) using small molecules as a guiding example
 ---
 
 <!-- > This blogpost is the first part of a series in which I take [a survey on high-dimensional Bayesian optimization we recently published]() and tutorialize it. It assumes familiarity with Gaussian Processes and Bayesian Optimization. [Check one of my previous blogposts if you need a refresher on those topics](/blogposts/2023-07-31/intro-to-bo). -->

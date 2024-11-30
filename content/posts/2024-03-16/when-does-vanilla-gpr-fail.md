@@ -6,6 +6,7 @@ image: /static/assets/hdgp_blogpost/ExactGPModelWithLogNormalPrior_comparison_on
 images:
 - static/assets/hdgp_blogpost/ExactGPModelWithLogNormalPrior_comparison_on_256d.jpg
 description: Disputing folk knowledge about how Gaussian Processes scale
+summary: This blogpost implements a small experiment to check when and how Gaussian Processes fail in high dimensions, and explains recent research on the subject.
 ---
 
 > This blogpost assumes you're already familiarized with the basics of Gaussian Processes. Check [my previous blogpost](https://www.miguelgondu.com/blogposts/2023-07-31/intro-to-bo/) for an introduction.

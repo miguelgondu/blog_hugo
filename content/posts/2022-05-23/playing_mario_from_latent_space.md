@@ -2,6 +2,7 @@
 date: "2022-05-23"
 title: "Training a VAE on Super Mario Bros and playing its levels"
 image: /static/assets/mario_blogpost/1175.png
+summary: Representing levels from Super Mario Bros as strings, and learning a continuous representation using Variational Autoencoders.
 ---
 
 [We recently open sourced an implementation of a categorical VAE trained on levels from the classic game Super Mario Bros.](https://github.com/miguelgondu/minimal_VAE_on_Mario) In this blogpost I expand on how it works, and how it can be used to play content directly from latent space. This blogpost covers how the model is defined and how the simulator we provide can be used to automatically extract things like how many jumps were performed, or whether the level is solvable by an artificial agent.

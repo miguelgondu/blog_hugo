@@ -1,6 +1,7 @@
 ---
 title:  "Latin Squares and Finite Groups"
 date:   "2018-01-24"
+summary: A proof that there are only two groups of order 6, using only combinatorial arguments.
 ---
 
 Last semester, for an algebra homework, I was trying to prove that there exist only 2 groups of order 6 (namely {{< katex >}}\mathbb{Z}_6{{< /katex >}} and {{< katex >}}S_3{{< /katex >}}). The usual argument uses the classification of groups with order {{< katex >}}pq{{< /katex >}} (with {{< katex >}}p{{< /katex >}} and {{< katex >}}q{{< /katex >}} prime), which itself uses Sylow theorems, but I wondered if I could prove it computationally. Here's my attempt.

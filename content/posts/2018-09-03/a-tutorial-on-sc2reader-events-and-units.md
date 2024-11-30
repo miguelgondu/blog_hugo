@@ -1,6 +1,7 @@
 ---
 title: "A tutorial on sc2reader: events and units"
 date: "2018-09-03"
+summary: The package `sc2reader` is useful for extracting data from replays of StarCraft 2. This blogpost provides a small tutorial on how to use it.
 ---
 
 I want to construct a database for macro learning in StarCraft 2. One way to study replays and mine information from them is using `pysc2`, an API developed by DeepMind that is specially designed for Reinforced Learning. Nahren and Justesen [developed a tool for mining replays using this API](https://github.com/njustesen/pysc2-replay), but unfortunately the DeepMind's API can only play replays that match the binary version of the game, and StarCraft 2 is being patched regularly, thus many "old" replays render unparsable. The other way to do it is using [`sc2reader`](https://github.com/ggtracker/sc2reader), an API developed by 26 contributors including David Joerg, Graylin Kim and  Kevin Leung.
