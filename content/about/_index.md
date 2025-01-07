@@ -9,7 +9,7 @@ title: About
 
 {{< figure src="/static/profile_photo.jpg" alt="An elephant at sunset" class="profile_pic" >}}
 
-I'm Miguel González Duque, a mathematician from the Universidad Nacional de Colombia, and a PhD from the IT University of Copenhagen (supervised by [Sebastian Risi](http://sebastianrisi.com/) and [Søren Hauberg](http://www2.compute.dtu.dk/~sohau/)). I'm currently working as a Machine Learning programmer at [MLLS](https://mlls.dk/), in the University of Copenhagen.
+I'm Miguel González Duque, a mathematician from the Universidad Nacional de Colombia, and a PhD from the IT University of Copenhagen (supervised by [Sebastian Risi](http://sebastianrisi.com/) and [Søren Hauberg](http://www2.compute.dtu.dk/~sohau/)). After my studies, I joined [MLLS](https://mlls.dk/) and [Wouter Boomsma](https://di.ku.dk/english/staff/vip/?pure=en/persons/275482)'s lab to work on discrete sequence optimization as a Machine Learning programmer. Nowadays I work as a Machine Learning engineer at [DBTune](https://www.dbtune.com/), in Malmö.
 
 I'm mostly interested in applications of probabilistic modeling, geometry and optimization. You can find some of my projects on [my GitHub profile](https://github.com/miguelgondu).
 
@@ -17,7 +17,8 @@ Feel free to contact me at miguelgondu(at)gmail(dot)com.
 
 ## Experience
 
--   Machine Learning Engineer at the [Center for Basic Machine Learning Research in Life Science](https://mlls.dk/), working with [Wouter Boomsma](https://di.ku.dk/english/staff/vip/?pure=en/persons/275482) and [Søren Hauberg](http://www2.compute.dtu.dk/~sohau/) (2023-current).
+-   Senior Machine Learning Engineer at [DBTune](https://www.dbtune.com/) (2025-current).
+-   Machine Learning Engineer at the [Center for Basic Machine Learning Research in Life Science](https://mlls.dk/), working with [Wouter Boomsma](https://di.ku.dk/english/staff/vip/?pure=en/persons/275482) and [Søren Hauberg](http://www2.compute.dtu.dk/~sohau/) (2023-2024).
 -   PhD Fellow at the [Creative AI Lab](https://game.itu.dk/groups/creativeai/), IT University of Copenhagen (2019-2023).
 -   PhD Sabbatical at the *Bosch Center for AI*, working on using Gaussian Processes for representation and regression of robotic data (6 months in 2022).
 
