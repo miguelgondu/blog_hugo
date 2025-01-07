@@ -2,7 +2,7 @@
 
 {{< figure src="/static/profile_photo.jpg" alt="An elephant at sunset" class="profile_pic" >}}
 
-I'm Miguel González Duque, a mathematician from the Universidad Nacional de Colombia, and a PhD from the IT University of Copenhagen (supervised by [Sebastian Risi](http://sebastianrisi.com/) and [Søren Hauberg](http://www2.compute.dtu.dk/~sohau/)). I work as a Machine Learning engineer at [DBTune](https://www.dbtune.com/), in Malmö.
+I'm Miguel González Duque, a mathematician from the Universidad Nacional de Colombia, and a PhD from the IT University of Copenhagen (supervised by [Sebastian Risi](http://sebastianrisi.com/) and [Søren Hauberg](http://www2.compute.dtu.dk/~sohau/)). Afterwards, I joined [MLLS](https://mlls.dk/) and [Wouter Boomsma](https://di.ku.dk/english/staff/vip/?pure=en/persons/275482)'s lab to work on discrete sequence optimization. Nowadays I work as a Machine Learning engineer at [DBTune](https://www.dbtune.com/), in Malmö.
 
 I'm mostly interested in applications of probabilistic modeling, geometry and optimization. You can find some of my projects on [my GitHub profile](https://github.com/miguelgondu).
 
