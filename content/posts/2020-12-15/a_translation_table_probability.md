@@ -2,6 +2,7 @@
 date: "2020-12-15"
 title: "Translating measure theory into probability"
 image: "/static/assets/translation_table_longer.svg"
+summary: a Rosetta stone, showing how basic concepts in measure theory (e.g. a measurable functions) correspond to concepts in probability theory (e.g. random variables).
 ---
 
 # Translating measure theory into probability

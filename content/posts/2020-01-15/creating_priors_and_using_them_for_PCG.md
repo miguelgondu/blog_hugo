@@ -2,6 +2,7 @@
 date: "2020-01-15"
 title: "Creating Priors using Normal Noise"
 image: "/static/assets/bounded_Laplacian.png"
+summary: In this blogpost I share a technique to generate random priors from Gaussian noise (by having the noise model the slope/curvature of the prior).
 ---
 
 When modeling processes in a Bayesian framework, you start with a prior distribution {{< katex >}}\pi(x){{< /katex >}} and you update it when new information, {{< katex >}}b{{< /katex >}}, arrives. This blogpost focuses on the creation of priors. These topics where taught to me on a PhD course at DTU in December, 2019. Many thanks to Daniela Calvetti and Erkki Somersalo for their lectures.

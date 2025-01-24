@@ -2,6 +2,7 @@
 date: "2019-10-25"
 title: "Creating a random graph from a string"
 image: "/static/assets/pseudorandom_graphs.jpg"
+summary: Generating random graphs using strings to seed the number generators.
 ---
 
 I have been toying around with the idea of creating art using pseudorandom number generators. In this post, I talk about a script that takes as input a string and outputs a random graph. Here are some examples:
