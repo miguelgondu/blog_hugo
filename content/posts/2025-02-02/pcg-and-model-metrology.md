@@ -4,11 +4,11 @@ title: "The future of black box optimization benchmarking is procedural"
 description: Recent work by Saxon et al. highlights the need for dynamic benchmarks, and I think procedural content generators might provide an answer.
 summary: Recent work by Saxon et al. highlights the need for dynamic benchmarks, and I think procedural content generators might provide an answer.
 ---
-
+<!-- 
 In 2021, NeurIPS opened the first call for papers on a *Datasets & Benchmarks* track.
 The organizers of the conference, which is one of the four or five largest Machine Learning (ML)
 conferences in the planet, highlighted both datasets and benchmarks as foundational components of
-ML research, vital to the future of the field.
+ML research, vital to the future of the field. -->
 
 This blogpost discusses 
 [a recent position paper by Saxon et al. called *Benchmarks as Microscopes: a Call for Model Metrology*.](https://openreview.net/forum?id=bttKwCZDkm&noteId=Yfwy2d4fiT)
@@ -20,7 +20,9 @@ but I think their arguments translate well to other domains.
 
 With this blogpost I try to bridge these two fields, encouraging PCG researchers
 to take a look into benchmark construction for other fields (becoming what Saxon et al.
-call *model metrologists*). It assumes a passing familiarity with black box optimization.
+call *model metrologists*).
+
+I will assume a passing familiarity with black box optimization, and I will briefly introduce PCG later on.
 
 # A definition and examples of benchmarking
 
