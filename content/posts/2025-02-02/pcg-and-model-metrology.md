@@ -12,13 +12,13 @@ ML research, vital to the future of the field. -->
 
 This blogpost discusses 
 [a recent position paper by Saxon et al. called *Benchmarks as Microscopes: a Call for Model Metrology*.](https://openreview.net/forum?id=bttKwCZDkm&noteId=Yfwy2d4fiT)
-Saxon et al. argue that the benchmarks we construct ought to be constrained, dynamic, and plug-and-play.
-I'll dive deeper into what each of these words mean in the context of black box optimization,
+The authors argue that the benchmarks we construct ought to be constrained, dynamic, and plug-and-play.
+I'll dive deeper into what each of these words mean,
 and I'll argue that researchers in Procedural Content Generation (PCG) are in an ideal position to
 construct such benchmarks. Their paper focuses on Natural Language Processing and language models,
-but I think their arguments translate well to other domains.
+but I think their arguments translate well to my domain: black box optimization.
 
-With this blogpost I try to bridge these two fields, encouraging PCG researchers
+With this blogpost I try to bridge the fields of black box benchmarking and PCG, encouraging PCG researchers
 to take a look into benchmark construction for other fields (becoming what Saxon et al.
 call *model metrologists*).
 
