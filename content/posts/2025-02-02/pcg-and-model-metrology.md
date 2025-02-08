@@ -38,19 +38,20 @@ performance of a model is gauged by a collection of metrics, for example
 
 In the case of black box optimization, this collection of problems tends to be
 a [family of synthetic functions for optimization](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
-Check several papers on black box optimization, and you will always find regret plots
-with performance on these.[^some-examples]
-
-[^some-examples]: Check for example [this]() paper, or [this]() paper, or [this other]()
-paper.
+[A couple of sentences detailing these synthetic black boxes and their affordances (e.g. multiple local minima,
+useless gradient info...)]
 
 [Images of some of these].
 
 We, as a community, have devoted a significant efforts on keeping track
 of the performance of our optimizers on families of synthetic benchmarks.
-There are for example entire platforms dedicated to measuring the performance
-of black box optimizers on these synthetic functions. An example of such is
-Hansen et al.'s *COmparing Continuous Optimizers* ([COCO](https://coco-platform.org/)).
+Check several papers on black box optimization, and you will always find regret plots
+with performance on these.[^some-examples] There are even entire platforms dedicated
+to measuring the performance of black box optimizers on these synthetic functions.
+An example of such is Hansen et al.'s *COmparing Continuous Optimizers* ([COCO](https://coco-platform.org/)).
+
+[^some-examples]: Check for example [this]() paper, or [this]() paper, or [this other]()
+paper.
 
 I would like to argue that **we are doing it wrong**. The goal of these synthetic functions
 is, allegedly, to give us proxies for real-world optimization tasks, but we don't know
