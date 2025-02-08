@@ -30,9 +30,9 @@ But first, just so we are all in the same page, let's define what a benchmark is
 a benchmark is a collection of problems in which a given system or model is tested. The
 performance of a model is gauged by a collection of metrics, for example
 - classification accuracy in image recognition,
-- number of correctly answered questions in the BAR exam in language modelling,
+- number of correctly answered questions in a standardized test (e.g. the BAR) in language modelling,
 - [prediction error with respect to the solutions of a differential equation](https://proceedings.neurips.cc/paper_files/paper/2022/file/0a9747136d411fb83f0cf81820d44afb-Paper-Datasets_and_Benchmarks.pdf) in scientific ML.
-- [prediction error when mutating proteins](https://proteingym.org/) in structural biology.
+- [prediction error on the properties of mutated proteins](https://proteingym.org/) in structural biology.
 
 # Benchmarking in black box optimization
 
