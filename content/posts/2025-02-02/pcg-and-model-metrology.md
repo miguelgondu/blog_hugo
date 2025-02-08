@@ -8,9 +8,7 @@ summary: Recent work by Saxon et al. highlights the need for dynamic benchmarks,
 In 2021, NeurIPS opened the first call for papers on a *Datasets & Benchmarks* track.
 The organizers of the conference, which is one of the four or five largest Machine Learning (ML)
 conferences in the planet, highlighted both datasets and benchmarks as foundational components of
-ML research, vital to the future of the field. Other conferences (like ICLR) have followed suit,
-opening similar tracks aimed at celebrating research on these two subfields (gathering and curating
-datasets, or benchmark construction).
+ML research, vital to the future of the field.
 
 This blogpost discusses 
 [a recent position paper by Saxon et al. called *Benchmarks as Microscopes: a Call for Model Metrology*.](https://openreview.net/forum?id=bttKwCZDkm&noteId=Yfwy2d4fiT)
