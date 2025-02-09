@@ -19,22 +19,42 @@ construct such benchmarks. Their paper focuses on Natural Language Processing an
 but I think their arguments translate well to my domain: black box optimization.
 
 With this blogpost I try to bridge the fields of black box benchmarking and PCG, encouraging PCG researchers
-to take a look into benchmark construction for other fields (becoming what Saxon et al.
+to take a look into benchmark construction for black box optimization and other fields (becoming what Saxon et al.
 call *model metrologists*).
 
-I will assume a passing familiarity with black box optimization, and I will briefly introduce PCG later on.
+Since the goal is to bring people from different fields together, I won't assume you have knowledge on black box
+optimization nor PCG. If you're already familiarized with these ideas, feel free to skip the sections that
+introduce said topics.
 
-# A definition and examples of benchmarking
+# The name of the game: black box optimization
 
-But first, just so we are all in the same page, let's define what a benchmark is. To me,
+<!-- [The definition of a black box] -->
+Think of a black box function as any process that transforms a set of inputs {{< katex >}}x_1, x_2, \dots, x_d{{< /katex >}} into a real number {{< katex >}}r = r(x_1, \dots, x_d){{< /katex >}}. This definition is vague on purpose, and allows us to define several things as black box functions. Two examples: when you log into Instagram, the app that you are shown is "parametrized" by several {{< katex >}}x_i{{< /katex >}}s, such as, for example, {{< katex >}}x_1{{< /katex >}} could be whether your reels are shown in a loop or just once, {{< katex >}}x_2{{< /katex >}} could be the person you first see on your timeline, and {{< katex >}}x_3{{< /katex >}} could be how often you're shown an ad.[^this-is-just-a-hypothesis] One example of a metric {{< katex >}}r(x_1, x_2, x_3){{< /katex >}} would be how long you spend on the app. Another less macabre example is making a recipe for cookies, with the different {{< katex >}}x_i{{< /katex >}}s being ingredient amounts, and the result being a combination of how tasty it is compared to the original recipe.[^google-did-this]
+
+[^this-is-just-a-hypothesis]: These are just examples, of course. I have zero clue which variables they use in their A/B testing, or how they define their reward.
+
+[^google-did-this]: This is the canonical example of black box optimization, and [Google actually did this once](https://static.googleusercontent.com/media/research.google.com/es//pubs/archive/46507.pdf).
+
+More formally, black boxes are mappings {{< katex >}}r\colon\mathcal{X}\to\mathbb{R}{{< /katex >}} from a search space {{< katex >}}\mathcal{X}{{< /katex >}} (which may be fully continuous, discrete, or a combination of both) to a real number. What makes it a black box (say, compared to other types of functions) is that **we don't have access to anything beyond evaluations.** In other types of mathematical functions, we usually have them in a closed form.
+
+Another idea that we usually attach to black boxes is that **evaluating them is expensive and cumbersome**. Cooking a batch of cookies might not sound like much but, in other applications, getting the feedback, reward or cost {{< katex >}}r(x_1, x_2, \dots, x_d){{< /katex >}} might take days, or involve using assets that are incredibly expensive. Think for example of a chemical reaction involving scarse and expensive solvents, or training a large Machine Learning model that takes days to train on sizeable compute.
+
+<!-- [Optimizing black boxes] -->
+The goal, then, is to **optimize** the black box. We want to find the ideal values for {{< katex >}}x_1, \dots, x_d{{< /katex >}} that maximize (or minimize) the signal {{< katex >}}r(x_1, \dots, x_d){{< /katex >}}. We want to find the recipe for the tastiest cookies. The lack of a closed form for our signal {{< katex >}}r{{< /katex >}} renders unavailable all the usual mathematical optimization techniques that are based on convexity, gradients, or Hessians, which means that we need to come up with alternatives that rely only on evaluating the function.
+
+<!-- [Black boxes are everywhere] -->
+Black box optimization is everywhere nowadays. This framework is generic enough to allow us to express several processes as black boxes to be optimized. There's plenty of contemporary work on this, with applications ranging in fields as diverse as self-driving labs, molecule and protein design for therapeutical purposes, hyperparameter tuning and automatic Machine Learning.
+
+
+# Benchmarking in black box optimization
+
+Just so we are all in the same page, let's define what a benchmark is. To me,
 a benchmark is a collection of problems in which a given system or model is tested. The
 performance of a model is gauged by a collection of metrics, for example
 - classification accuracy in image recognition,
 - number of correctly answered questions in a standardized test (e.g. the BAR) in language modelling,
 - [prediction error with respect to the solutions of a differential equation](https://proceedings.neurips.cc/paper_files/paper/2022/file/0a9747136d411fb83f0cf81820d44afb-Paper-Datasets_and_Benchmarks.pdf) in scientific ML.
 - [prediction error on the properties of mutated proteins](https://proteingym.org/) in structural biology.
-
-# Benchmarking in black box optimization
 
 In the case of black box optimization, this collection of problems tends to be
 a [family of synthetic functions for optimization](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
