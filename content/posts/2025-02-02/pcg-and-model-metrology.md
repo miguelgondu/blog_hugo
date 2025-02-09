@@ -131,15 +131,15 @@ constrained, dynamic & plug-and-play benchmarks, tailored to the needs of a give
 
 [...]
 
-# An example: closed-form test functions in biology
+# Example: closed-form test functions in biology
 
 [Ehrlich functions]
 
-# Another example: PCG use in Reinforcement Learning
+# Example: PCG use in Reinforcement Learning
 
 [PCG is already used to create agents that perform certain tasks in Reinforcement Learning]
 
-# A personal example: Super Mario Bros and discrete sequence optimization
+# Example: Super Mario Bros and discrete sequence optimization
 
 # Conclusion
 
