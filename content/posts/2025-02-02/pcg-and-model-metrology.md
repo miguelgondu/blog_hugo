@@ -45,7 +45,6 @@ The goal, then, is to **optimize** the black box. We want to find the ideal valu
 <!-- [Black boxes are everywhere] -->
 Black box optimization is everywhere nowadays. This framework is generic enough to allow us to express several processes as black boxes to be optimized. There's plenty of contemporary work on this, with applications ranging in fields as diverse as self-driving labs, molecule and protein design for therapeutical purposes, hyperparameter tuning and automatic Machine Learning.
 
-
 # Benchmarking in black box optimization
 
 Just so we are all in the same page, let's define what a benchmark is. To me,
@@ -57,15 +56,21 @@ performance of a model is gauged by a collection of metrics, for example
 - [prediction error on the properties of mutated proteins](https://proteingym.org/) in structural biology.
 
 In the case of black box optimization, this collection of problems tends to be
-a [family of synthetic functions for optimization](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
-[A couple of sentences detailing these synthetic black boxes and their affordances (e.g. multiple local minima,
-useless gradient info...)]
+a [family of synthetic functions for optimization](https://en.wikipedia.org/wiki/Test_functions_for_optimization),
+and the metric that we use to check whether we are doing well is e.g. how quickly we're finding the maximum/minimum
+of the function (or how close we get to finding it), with a metric called **cummulative regret**, defined mathematically
+as [TODO:ADD].
+
+Although they have a closed form (which is slightly contradicting our definition of a black box), their form is
+designed to mimic certain behaviors that we might expect from real black boxes out there: multiple local minima/maxima,
+useless gradient information, needle-in-a-haystack-type problems... Here are some plots of how these functions look
+like in the 2D case.
 
 [Images of some of these].
 
 We, as a community, have devoted a significant efforts on keeping track
-of the performance of our optimizers on families of synthetic benchmarks.
-Check several papers on black box optimization, and you will always find regret plots
+of the performance of our optimizers on these synthetic benchmarks.
+Check any paper on black box optimization, and you will always find regret plots
 with performance on these.[^some-examples] There are even entire platforms dedicated
 to measuring the performance of black box optimizers on these synthetic functions.
 An example of such is Hansen et al.'s *COmparing Continuous Optimizers* ([COCO](https://coco-platform.org/)).
@@ -73,16 +78,23 @@ An example of such is Hansen et al.'s *COmparing Continuous Optimizers* ([COCO](
 [^some-examples]: Check for example [this]() paper, or [this]() paper, or [this other]()
 paper.
 
-I would like to argue that **we are doing it wrong**. The goal of these synthetic functions
-is, allegedly, to give us proxies for real-world optimization tasks, but we don't know
-how the real world is until we face it. These synthetic black box functions (as well
-as many other benchmarks in black box optimization for chemistry or biology) fall short
-when describing the potential of an optimizer in a given real-world task.
+I would like to argue that **our efforts are better spent doing something different**.
+The goal of these synthetic functions is, allegedly, to give us proxies for real-world
+optimization tasks, but we don't know how the real world is until we face it. These
+synthetic black box functions (as well as many other benchmarks in black box optimization
+for chemistry or biology) fall short when describing the potential of an optimizer in a
+given real-world task.
 
 The current state of our benchmarking is such that, when a practitioner arrives with an
 interesting problem to optimize, we don't have much to show, and we can't confidently
 assess which algorithms would perform best in their problems. Best we can say is which
-algorithms perform best on some highly synthetic, general set of examples.
+algorithms perform best on these highly synthetic, general set of examples.[^carolas-work]
+
+[^carolas-work]: This is not entirely true. We can tell practitioners to use tools
+for automatic selection of optimizers. There's at least plenty of research on making
+dynamic tools for black box optimization, with plenty of progress on packages like
+[nevergrad]() or [Ax](). If you're interested in this line of thinking, check
+[Carola Doerr's]() work.
 
 <!-- Admitedly, these synthetic functions are mainly used to detect whether the algorithm
 works (i.e. they're used as a sanity check, and not as grounds for decision-making).
@@ -90,7 +102,7 @@ Some of these black boxes have specific behaviors (e.g. a single optima in a ver
 flat region, or several local optima with deceiving gradient information), which
 also allow us to detect the strengths and weaknesses of our black box optimizers. -->
 
-# Model metrology (or best practices when it comes to benchmarking)
+# Model metrology (or best practices for benchmarking)
 
 <!-- [talking about Saxon's work] -->
 Saxon et al. gave me the language to formulate exactly what we are doing wrong: these
@@ -126,6 +138,8 @@ constrained, dynamic & plug-and-play benchmarks, tailored to the needs of a give
 # Another example: PCG use in Reinforcement Learning
 
 [PCG is already used to create agents that perform certain tasks in Reinforcement Learning]
+
+# A personal example: Super Mario Bros and discrete sequence optimization
 
 # Conclusion
 
