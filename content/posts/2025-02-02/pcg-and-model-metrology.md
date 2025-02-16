@@ -4,11 +4,6 @@ title: "The future of black box optimization benchmarking is procedural"
 description: Recent work by Saxon et al. highlights the need for dynamic benchmarks, and I think procedural content generators might provide an answer.
 summary: Recent work by Saxon et al. highlights the need for dynamic benchmarks, and I think procedural content generators might provide an answer.
 ---
-<!-- 
-In 2021, NeurIPS opened the first call for papers on a *Datasets & Benchmarks* track.
-The organizers of the conference, which is one of the four or five largest Machine Learning (ML)
-conferences in the planet, highlighted both datasets and benchmarks as foundational components of
-ML research, vital to the future of the field. -->
 
 This blogpost discusses 
 a recent position paper by Saxon et al. called [*Benchmarks as Microscopes: a Call for Model Metrology*.](https://openreview.net/forum?id=bttKwCZDkm&noteId=Yfwy2d4fiT)
@@ -127,7 +122,6 @@ constrained, dynamic & plug-and-play benchmarks, tailored to the needs of a give
 
 # Procedural Content Generation...
 
-<!-- [A brief presentation of PCG as] -->
 ...stands for the use of algorithms to generate content. It has plenty of use in video games,
 where PCG allows developers to generate assets for their games (from the clothes a character wears,
 to the entire game map). Several block-buster games use PCG as a core mechanic. For example,
@@ -173,8 +167,10 @@ a minute per black box call.[^that's-why-we-developed-poli] In the language of S
 access to some of these black boxes. It's called [poli]().
 
 In 2024, Stanton et al. published a paper called [*Closed-Form Test Functions for Biophysical Sequence Optimization Algorithms*](https://arxiv.org/abs/2407.00236).
-In it, they identify precisely this lack of plug-and-play black boxes in protein design, and propose a black box that mimics the
-relevant behavior of the signals {{< katex >}}r{{< /katex>}} described above. They needed to create a black box that is
+In it, they identify this lack of plug-and-play black boxes in protein design, and propose a black box that mimics the
+relevant behavior of the signals {{< katex >}}r{{< /katex>}} described above.
+
+The authors set out to create a black box that is
 1. Evaluated on discrete sequences and their mutations, alike protein sequences.
 2. Difficult enough to optimize, mimicking some second-order interactions (*epistasis*) that are usually present in protein design.
 3. Instant to query.
@@ -188,6 +184,19 @@ black box, which relies on randomness to create a set of conditions that need to
 Almost as if they were creating a ruleset for a _game_. Funnily, some of their parameters (the quantization, for example) can
 be understood as _increasing the difficulty of the game_.
 
+# Towards procedural benchmark generation
+
+We could think of creating a novel subfield of model metrology: *procedural benchmark generation*.
+PCG researchers could start by establishing contact with practitioners in black-box optimization and,
+together with the model metrologists of said domain, they could establish the requirements that
+the developed benchmarks would need to meet.
+
+Afterwards, it's all about procedural generation: cleverly combining algorithms that rely on randomness (or grammars,
+or useful representations followed by search, or any other PCG technique) to create a procedurally generated benchmark.
+This process of generating benchmarks could be evaluated using all the language we have for content: is it diverse enough?
+Can we control it? Does it express the desired behaviors? Are the resulting benchmarks a believable proxy of the actual task?
+Is generation fast?
+
 # Conclusion
 
 Saxon et al. call attention to the fact that, quote, "Benchmarks can aim for generality—or they can be valid and useful".
@@ -196,5 +205,8 @@ to black box optimization (where we have been devoting significant resources to 
 
 I argue that benchmarks and black boxes can be thought of as a form of content, and that we could in the future leverage
 all the language that has been developed for Procedural Content Generation in the context of video games. In other words,
-PCG researchers could be great *model metrologists* and benchmark developers. A recent example can be found in biology,
-where a procedurally generated black box is a useful replacement for expensive simulators that are difficult to set-up.
+PCG researchers could be great *model metrologists* and benchmark developers. We could even think of formulating a
+research subfield of model metrology based on the procedural generation of benchmarks.
+
+A recent example can be found in biology, where a procedurally generated black box is a useful replacement for expensive
+simulators that are difficult to set-up.
