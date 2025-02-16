@@ -26,18 +26,23 @@ introduce said topics.
 # The name of the game: black box optimization
 
 <!-- [The definition of a black box] -->
-Think of a black box function as any process that transforms a set of inputs {{< katex >}}x_1, x_2, \dots, x_d{{< /katex >}} into a real number {{< katex >}}r = r(x_1, \dots, x_d){{< /katex >}}. This definition is vague on purpose, and allows us to define several things as black box functions. Two examples: when you log into Instagram, the app that you are shown is "parametrized" by several {{< katex >}}x_i{{< /katex >}}s, such as, for example, {{< katex >}}x_1{{< /katex >}} could be whether your reels are shown in a loop or just once, {{< katex >}}x_2{{< /katex >}} could be the person you first see on your timeline, and {{< katex >}}x_3{{< /katex >}} could be how often you're shown an ad.[^this-is-just-a-hypothesis] One example of a metric {{< katex >}}r(x_1, x_2, x_3){{< /katex >}} would be how long you spend on the app. Another less macabre example is making a recipe for cookies, with the different {{< katex >}}x_i{{< /katex >}}s being ingredient amounts, and the result being a combination of how tasty it is compared to the original recipe.[^google-did-this]
+Think of a black box function as any process that transforms a set of inputs {{< katex >}}x_1, x_2, \dots, x_d{{< /katex >}} into a real number {{< katex >}}r = r(x_1, \dots, x_d){{< /katex >}}.
 
-[^this-is-just-a-hypothesis]: These are just examples, of course. I have zero clue which variables they use in their A/B testing, or how they define their reward.
+This definition is vague on purpose, and allows us to define several things as black box functions. Two examples: when you log into Instagram, the app that you are shown is "parametrized" by several {{< katex >}}x_i{{< /katex >}} variables such as, for example, {{< katex >}}x_1{{< /katex >}} could be whether your reels are shown in a loop or just once, {{< katex >}}x_2{{< /katex >}} could be the person you first see on your timeline, and {{< katex >}}x_3{{< /katex >}} could be how often you're shown an ad.[^this-is-just-a-hypothesis] One example of a metric {{< katex >}}r(x_1, x_2, x_3){{< /katex >}} would be how long you spend on the app. 
+Another less macabre example is making a recipe for cookies, with the different {{< katex >}}x_i{{< /katex >}}s being ingredient amounts, and the result being a combination of how tasty it is compared to the original recipe.[^google-did-this]
+
+[^this-is-just-a-hypothesis]: These are just examples, of course.
 
 [^google-did-this]: This is the canonical example of black box optimization, and [Google actually did this once](https://static.googleusercontent.com/media/research.google.com/es//pubs/archive/46507.pdf).
 
 More formally, black boxes are mappings {{< katex >}}r\colon\mathcal{X}\to\mathbb{R}{{< /katex >}} from a search space {{< katex >}}\mathcal{X}{{< /katex >}} (which may be fully continuous, discrete, or a combination of both) to a real number. What makes it a black box (say, compared to other types of functions) is that **we don't have access to anything beyond evaluations.** In other types of mathematical functions, we usually have them in a closed form.
 
-Another idea that we usually attach to black boxes is that **evaluating them is expensive and cumbersome**. Cooking a batch of cookies might not sound like much but, in other applications, getting the feedback, reward or cost {{< katex >}}r(x_1, x_2, \dots, x_d){{< /katex >}} might take days, or involve using assets that are incredibly expensive. Think for example of a chemical reaction involving scarse and expensive solvents, or training a large Machine Learning model that takes days to train on sizeable compute.
+Another idea that we usually attach to black boxes is that **evaluating them is expensive and cumbersome**. Cooking a batch of cookies might not sound like much but, in other applications, getting the feedback, reward or cost {{< katex >}}r(x_1, x_2, \dots, x_d){{< /katex >}} might take days, or involve using assets that are incredibly expensive. Think for example of a chemical reaction involving scarse and expensive solvents, or training a large Machine Learning model for several days on sizeable compute.
 
 <!-- [Optimizing black boxes] -->
-The goal, then, is to **optimize** the black box. We want to find the ideal values for {{< katex >}}x_1, \dots, x_d{{< /katex >}} that maximize (or minimize) the signal {{< katex >}}r(x_1, \dots, x_d){{< /katex >}}. We want to find the recipe for the tastiest cookies. The lack of a closed form for our signal {{< katex >}}r{{< /katex >}} renders unavailable all the usual mathematical optimization techniques that are based on convexity, gradients, or Hessians, which means that we need to come up with alternatives that rely only on evaluating the function.
+The goal, then, is to **optimize** the black box. We want to find the values of {{< katex >}}x_1, \dots, x_d{{< /katex >}} that maximize (or minimize) the signal {{< katex >}}r(x_1, \dots, x_d){{< /katex >}}. We want to find the recipe for the tastiest cookies, and Meta wants to keep us on Instagram as long as possible. The lack of a closed form for our signal {{< katex >}}r{{< /katex >}} renders unavailable all the usual mathematical optimization techniques that are based on convexity, gradients, or Hessians, which means that we need to come up with alternatives that rely only on evaluating the function.[^direct-optimization-is-another-name]
+
+[^direct-optimization-is-another-name]: In [Algorithms for optimization](https://algorithmsbook.com/optimization/) by Kochenderfer and Wheeler, this type of optimization is called _direct optimization_. It has a pretty long history. Check Chap. 7 in their book for a longer introduction on the classics of the field.
 
 <!-- [Black boxes are everywhere] -->
 Black box optimization is everywhere nowadays. This framework is generic enough to allow us to express several processes as black boxes to be optimized. There's plenty of contemporary work on this, with applications ranging in fields as diverse as self-driving labs, molecule and protein design for therapeutical purposes, hyperparameter tuning and automatic Machine Learning.
@@ -52,7 +57,7 @@ performance of a model is gauged by a collection of metrics, for example
 - [prediction error with respect to the solutions of a differential equation](https://proceedings.neurips.cc/paper_files/paper/2022/file/0a9747136d411fb83f0cf81820d44afb-Paper-Datasets_and_Benchmarks.pdf) in scientific ML.
 - [prediction error on the properties of mutated proteins](https://proteingym.org/) in structural biology.
 
-In the case of black box optimization, this collection of problems tends to be
+In the case of black box optimization, it's common to start benchmarking on
 a [family of synthetic functions for optimization](https://en.wikipedia.org/wiki/Test_functions_for_optimization),
 and the metric that we use to check whether we are doing well is e.g. how quickly we're finding the maximum/minimum
 of the function (or how close we get to finding it), with a metric called **regret**, defined mathematically
@@ -98,9 +103,11 @@ Saxon et al. gave me the language to formulate exactly what we are doing wrong: 
 benchmarks are *too general*, and we should be constructing specialized, **constrained**
 problems to test our optimizers, focusing on what a given practitioner needs. Moreover,
 our benchmarks are *static* (i.e. they're the same over time), and thus we run the risk
-of overfitting to them. We need **dynamic** benchmarks. One aspect that we have nailed,
+of overfitting to them.[^silly-optimization] We need **dynamic** benchmarks. One aspect that we have nailed,
 though, and that we should keep in future iterations is that our benchmarks are easily
 deployable, or **plug-and-play**.
+
+[^silly-optimization]: I've heard from two researchers in the field that one optimizer was performing surprisingly well in several benchmarks, optimizing them instantly... it turned out that the optimizer started by proposing the origin point {{< katex >}}(0, 0, \dots, 0){{< /katex >}}... which is coincidentally the optima location for several of these black boxes. 
 
 These are the three keywords they claim make good benchmarks. Good benchmarks are
 
@@ -124,7 +131,9 @@ on the player's position.
 {{< figure src="/static/assets/pbg_blogpost/no-mans-sky.png" alt="A press-release image of No Man's Sky." class="largeSize" title="An image from No Man's Sky, taken from their press release. A whole universe made procedurally." >}}
 
 PCG is also a research field, in which scholars taxonomize, study and develop novel techniques for
-generating content. Some of them involve searching over a certain representation of game content (e.g. describing a dungeon game as a graph of connected rooms, and searching over all possible graphs of a certain size), other involve exploring formal grammars that define game logic/assets, and most of them use randomness to create content. In Minecraft, the whole world is made using random number generators.
+generating content.[^read-more-in-the-pcg-book] Some of them involve searching over a certain representation of game content (e.g. describing a dungeon game as a graph of connected rooms, and searching over all possible graphs of a certain size), other involve exploring formal grammars that define game logic/assets, and most of them use randomness to create content. In Minecraft, the whole world is made using random number generators.
+
+[^read-more-in-the-pcg-book]: If you want to learn more, check the [PCG book](https://www.pcgbook.com/) by several researchers in the field.
 
 **Researchers in PCG are in an ideal position to create constrained, dynamic & plug-and-play benchmarks.**
 If we can formulate benchmarks as pieces of content, we could leverage plenty of research in the
@@ -172,10 +181,10 @@ access to some of these black boxes. It's called [poli](https://github.com/Machi
 
 In 2024, Stanton et al. published a paper called [*Closed-Form Test Functions for Biophysical Sequence Optimization Algorithms*](https://arxiv.org/abs/2407.00236).
 In it, they identify this lack of plug-and-play black boxes in protein design, and propose a black box that mimics the
-relevant behavior of the signals {{< katex >}}r{{< /katex>}} described above.
+relevant behavior of the signals {{< katex >}}r{{< /katex>}} described above, while being trivial to query.
 
 The authors set out to create a black box that is
-1. Evaluated on discrete sequences and their mutations, alike protein sequences.
+1. Evaluated on discrete sequences and their mutations, which may render feasible or unfeasible sequences.
 2. Difficult enough to optimize, mimicking some second-order interactions (*epistasis*) that are usually present in protein design.
 3. Instant to query.
 
