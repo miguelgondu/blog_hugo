@@ -11,11 +11,13 @@ conferences in the planet, highlighted both datasets and benchmarks as foundatio
 ML research, vital to the future of the field. -->
 
 This blogpost discusses 
-[a recent position paper by Saxon et al. called *Benchmarks as Microscopes: a Call for Model Metrology*.](https://openreview.net/forum?id=bttKwCZDkm&noteId=Yfwy2d4fiT)
+a recent position paper by Saxon et al. called [*Benchmarks as Microscopes: a Call for Model Metrology*.](https://openreview.net/forum?id=bttKwCZDkm&noteId=Yfwy2d4fiT)
 The authors argue that the benchmarks we construct ought to be constrained, dynamic, and plug-and-play.
 I'll dive deeper into what each of these words mean,
 and I'll argue that researchers in Procedural Content Generation (PCG) are in an ideal position to
-construct such benchmarks. Their paper focuses on Natural Language Processing and language models,
+construct such benchmarks.
+
+Saxon et al.'s paper focuses on Natural Language Processing and language models,
 but I think their arguments translate well to my domain: black box optimization.
 
 With this blogpost I try to bridge the fields of black box benchmarking and PCG, encouraging PCG researchers
@@ -123,23 +125,76 @@ The authors call for a new research field, entirely devoted to evaluating model 
 called *model metrology*. A model metrologist is someone who has the tools to create such
 constrained, dynamic & plug-and-play benchmarks, tailored to the needs of a given practitioner.
 
-# Procedural Content Generation
+# Procedural Content Generation...
 
-[A brief presentation of PCG as]
+<!-- [A brief presentation of PCG as] -->
+...stands for the use of algorithms to generate content. It has plenty of use in video games,
+where PCG allows developers to generate assets for their games (from the clothes a character wears,
+to the entire game map). Several block-buster games use PCG as a core mechanic. For example,
+the whole world one explores inside Minecraft is procedurally generated from a random seed; another example
+is No Man's Sky, where an entire universe is created procedurally using an algorithm that depends only
+on the player's position.
 
-# PCG researchers know about creating constrained & dynamic environments
+[Images of these two games]
 
-[...]
+PCG is also a research field, in which scholars taxonomize, study and develop novel techniques for
+generating content. Researchers in this field include Julian Togelius, Georgios Yannakakis or
+my PhD supervisor Sebastian Risi, whose labs push forward these studies with great frequency. 
 
-# Example: closed-form test functions in biology
+**Researchers in PCG are in an ideal position to create constrained, dynamic & plug-and-play benchmarks.**
+If we can formulate benchmarks as pieces of content, we could leverage plenty of research in the
+PCG community. They already have a language for developing _content_, measuring e.g. the
+reliability, diversity and controlability of their developments. We just need to convince them to
+work on building synthetic benchmarks for us according to the specific needs of a set of practitioners.
 
-[Ehrlich functions]
+Let me further explain what I mean by this with a recent example. It shows how procedural generation
+can be applied to constructing black boxes that are relevant for specific domains.
 
-# Example: PCG use in Reinforcement Learning
+# Example: closed-form test functions in structural biology
 
-[PCG is already used to create agents that perform certain tasks in Reinforcement Learning]
+Let me introduce you to the wonderful world of protein design.[^talking-about-ab-initio] The set-up goes like this: one starts
+with a **discrete sequence** of amino acids {{< katex >}}(a_1, \dots, a_L){{< /katex >}} called the
+**wildtype**, and the goal is to find slight deviations from this wildtype such that a signal {{< katex >}}r{{< /katex >}}
+(for example thermal stability, or whether the protein binds well to a certain receptor in the body) is optimized.
 
-# Example: Super Mario Bros and discrete sequence optimization
+[^talking-about-ab-initio]: If you're a biologist, you'll cringe at my description.
+I'm talking here about *ab initio* protein design, where one starts from a wildtype. There's
+also *de novo* protein design, where one creates sequences of amino acids "from nothing". An example
+of *de novo* design is [the Chroma paper](TODO:ADD).
+
+[Image of a protein, and one mutation it's mutation]
+
+Nowadays, computing such signals is not straight-forward. The state-of-the-art at time of writing is using huge Machine Learning
+models to get estimates of binding affinity (AlphaFold 2, as an example), or using physical simulators. These are not easy to set-up,
+and much less query: one needs to install licensed software, have decent amounts of compute, and have the patience to wait for more than
+a minute per black box call.[^that's-why-we-developed-poli] In the language of Saxon et al., **these black boxes are not plug-and-play**.
+
+[^that's-why-we-developed-poli]: And that's why, in my previous job, we tried to develop a Python framework for democratizing
+access to some of these black boxes. It's called [poli]().
+
+In 2024, Stanton et al. published a paper called [*Closed-Form Test Functions for Biophysical Sequence Optimization Algorithms*](https://arxiv.org/abs/2407.00236).
+In it, they identify precisely this lack of plug-and-play black boxes in protein design, and propose a black box that mimics the
+relevant behavior of the signals {{< katex >}}r{{< /katex>}} described above. They needed to create a black box that is
+1. Evaluated on discrete sequences and their mutations, alike protein sequences.
+2. Difficult enough to optimize, mimicking some second-order interactions (*epistasis*) that are usually present in protein design.
+3. Instant to query.
+
+To do so, the authors propose *Ehrlich functions*, a procedurally generated black box based on a Markov Decision Process (MDP)
+to generate a "feasibility distribution" over the space of amino acids, and a set of motifs that needs to be satisfied in the
+sequence. Both the MDP and motifs are constructed using at random based on a seed.
+
+When I first read this paper, I felt as if I was reading a PCG article: The authors propose a _procedurally generated_
+black box, which relies on randomness to create a set of conditions that need to be satisfied to _score_ a discrete sequence.
+Almost as if they were creating a ruleset for a _game_. Funnily, some of their parameters (the quantization, for example) can
+be understood as _increasing the difficulty of the game_.
 
 # Conclusion
 
+Saxon et al. call attention to the fact that, quote, "Benchmarks can aim for generality—or they can be valid and useful".
+I agree. And even though they raise their point in the context of evaluating language models, the lessons translate well
+to black box optimization (where we have been devoting significant resources to optimizing synthetic benchmarks).
+
+I argue that benchmarks and black boxes can be thought of as a form of content, and that we could in the future leverage
+all the language that has been developed for Procedural Content Generation in the context of video games. In other words,
+PCG researchers could be great *model metrologists* and benchmark developers. A recent example can be found in biology,
+where a procedurally generated black box is a useful replacement for expensive simulators that are difficult to set-up.
