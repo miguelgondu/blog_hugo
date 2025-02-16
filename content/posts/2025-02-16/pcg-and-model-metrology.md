@@ -107,7 +107,7 @@ of overfitting to them.[^silly-optimization] We need **dynamic** benchmarks. One
 though, and that we should keep in future iterations is that our benchmarks are easily
 deployable, or **plug-and-play**.
 
-[^silly-optimization]: I've heard from two researchers in the field that one optimizer was performing surprisingly well in several benchmarks, optimizing them instantly... it turned out that the optimizer started by proposing the origin point {{< katex >}}(0, 0, \dots, 0){{< /katex >}}... which is coincidentally the optima location for several of these black boxes. 
+[^silly-optimization]: I've heard from two researchers in the field that one optimizer was performing surprisingly well in several benchmarks, optimizing them instantly... it turned out that the optimizer started by proposing the origin point {{< katex >}}(0, 0, \dots, 0){{< /katex >}}, which is coincidentally the optima location for several of these black boxes. 
 
 These are the three keywords they claim make good benchmarks. Good benchmarks are
 
