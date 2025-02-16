@@ -141,7 +141,20 @@ PCG community. They already have a language for developing _content_, measuring 
 reliability, diversity and controlability of their developments. We just need to convince them to
 work on building synthetic benchmarks for us according to the specific needs of a set of practitioners.
 
-Let me further explain what I mean by this with a recent example. It shows how procedural generation
+# Towards procedural benchmark generation
+
+We could think of creating a novel subfield of model metrology: *procedural benchmark generation*.
+PCG researchers could start by establishing contact with practitioners in black-box optimization and,
+together with the model metrologists of said domain, they could establish the requirements that
+the developed benchmarks would need to meet.
+
+Afterwards, it's all about procedural generation: cleverly combining algorithms that rely on randomness (or grammars,
+or useful representations followed by search, or any other PCG technique) to create a procedurally generated benchmark.
+This process of generating benchmarks could then be evaluated using all the language we have for content: is it diverse enough?
+Can we control it? Does it express the desired behaviors? Are the resulting benchmarks a believable proxy of the actual task?
+Is generation fast?
+
+Let me explain further what I mean by this with a recent example. It shows how procedural generation
 can be applied to constructing black boxes that are relevant for specific domains.
 
 # Example: closed-form test functions in structural biology
@@ -184,18 +197,9 @@ black box, which relies on randomness to create a set of conditions that need to
 Almost as if they were creating a ruleset for a _game_. Funnily, some of their parameters (the quantization, for example) can
 be understood as _increasing the difficulty of the game_.
 
-# Towards procedural benchmark generation
-
-We could think of creating a novel subfield of model metrology: *procedural benchmark generation*.
-PCG researchers could start by establishing contact with practitioners in black-box optimization and,
-together with the model metrologists of said domain, they could establish the requirements that
-the developed benchmarks would need to meet.
-
-Afterwards, it's all about procedural generation: cleverly combining algorithms that rely on randomness (or grammars,
-or useful representations followed by search, or any other PCG technique) to create a procedurally generated benchmark.
-This process of generating benchmarks could be evaluated using all the language we have for content: is it diverse enough?
-Can we control it? Does it express the desired behaviors? Are the resulting benchmarks a believable proxy of the actual task?
-Is generation fast?
+This, to me, is a first example of how procedural benchmark generation could look like. We could then investigate
+whether Ehrlich functions are indeed representative of the issues of protein sequence design, and whether
+Ehrlich functions are diverse, controllable, etc.
 
 # Conclusion
 
@@ -205,8 +209,6 @@ to black box optimization (where we have been devoting significant resources to 
 
 I argue that benchmarks and black boxes can be thought of as a form of content, and that we could in the future leverage
 all the language that has been developed for Procedural Content Generation in the context of video games. In other words,
-PCG researchers could be great *model metrologists* and benchmark developers. We could even think of formulating a
-research subfield of model metrology based on the procedural generation of benchmarks.
-
+PCG researchers could be great *model metrologists* and benchmark developers. 
 A recent example can be found in biology, where a procedurally generated black box is a useful replacement for expensive
 simulators that are difficult to set-up.
