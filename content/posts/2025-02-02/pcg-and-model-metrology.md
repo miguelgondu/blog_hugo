@@ -55,15 +55,15 @@ performance of a model is gauged by a collection of metrics, for example
 In the case of black box optimization, this collection of problems tends to be
 a [family of synthetic functions for optimization](https://en.wikipedia.org/wiki/Test_functions_for_optimization),
 and the metric that we use to check whether we are doing well is e.g. how quickly we're finding the maximum/minimum
-of the function (or how close we get to finding it), with a metric called **cummulative regret**, defined mathematically
-as [TODO:ADD].
+of the function (or how close we get to finding it), with a metric called **regret**, defined mathematically
+as the distance to the optimal value.
 
 Although they have a closed form (which is slightly contradicting our definition of a black box), their form is
 designed to mimic certain behaviors that we might expect from real black boxes out there: multiple local minima/maxima,
-useless gradient information, needle-in-a-haystack-type problems... Here are some plots of how these functions look
-like in the 2D case.
+useless gradient information, needle-in-a-haystack-type problems... As an example of this, here are the plots of how Rastrigin and Lévi (two common examples) look
+in the 2D case: Notice how Rastrigin has several local minima, meaning that derivative-based methods would easily get stuck on local minima, and also notice how one of the dimensions of Lévi (Y) isn't as important as the other (X). These are properties we may also expect of real-world black boxes.
 
-[Images of some of these].
+{{< figure src="/static/assets/pbg_blogpost/optimization_test_functions.png" alt="Two synthetic benchmarks: Rastrigin and Lévi" class="largeSize" title="Two commonly-used synthetic black boxes for continuous optimization." >}}
 
 We, as a community, have devoted a significant efforts on keeping track
 of the performance of our optimizers on these synthetic benchmarks.
@@ -72,8 +72,7 @@ with performance on these.[^some-examples] There are even entire platforms dedic
 to measuring the performance of black box optimizers on these synthetic functions.
 An example of such is Hansen et al.'s *COmparing Continuous Optimizers* ([COCO](https://coco-platform.org/)).
 
-[^some-examples]: Check for example [this]() paper, or [this]() paper, or [this other]()
-paper.
+[^some-examples]: Check for example [Fig 2. in the SAASBO](https://proceedings.mlr.press/v161/eriksson21a/eriksson21a.pdf) paper, or [Fig. 5 in the Vanilla BO](https://arxiv.org/pdf/2402.02229) paper.
 
 I would like to argue that **our efforts are better spent doing something different**.
 The goal of these synthetic functions is, allegedly, to give us proxies for real-world
@@ -85,23 +84,16 @@ given real-world task.
 The current state of our benchmarking is such that, when a practitioner arrives with an
 interesting problem to optimize, we don't have much to show, and we can't confidently
 assess which algorithms would perform best in their problems. Best we can say is which
-algorithms perform best on these highly synthetic, general set of examples.[^carolas-work]
+algorithms perform best on highly synthetic, general sets of examples.[^carolas-work]
 
-[^carolas-work]: This is not entirely true. We can tell practitioners to use tools
+[^carolas-work]: This is not entirely true. On one hand, there are several data-driven proxies for tasks in biology, chemistry, material science... On the other, we can tell practitioners to use tools
 for automatic selection of optimizers. There's at least plenty of research on making
 dynamic tools for black box optimization, with plenty of progress on packages like
-[nevergrad]() or [Ax](). If you're interested in this line of thinking, check
-[Carola Doerr's]() work.
-
-<!-- Admitedly, these synthetic functions are mainly used to detect whether the algorithm
-works (i.e. they're used as a sanity check, and not as grounds for decision-making).
-Some of these black boxes have specific behaviors (e.g. a single optima in a very
-flat region, or several local optima with deceiving gradient information), which
-also allow us to detect the strengths and weaknesses of our black box optimizers. -->
+[nevergrad](https://facebookresearch.github.io/nevergrad/) or [Ax](https://ax.dev/). If you're interested in this line of thinking, check
+[Carola Doerr's](https://scholar.google.com/citations?user=CU-V1sEAAAAJ&hl=es) current and future work.
 
 # Model metrology (or best practices for benchmarking)
 
-<!-- [talking about Saxon's work] -->
 Saxon et al. gave me the language to formulate exactly what we are doing wrong: these
 benchmarks are *too general*, and we should be constructing specialized, **constrained**
 problems to test our optimizers, focusing on what a given practitioner needs. Moreover,
@@ -129,11 +121,10 @@ the whole world one explores inside Minecraft is procedurally generated from a r
 is No Man's Sky, where an entire universe is created procedurally using an algorithm that depends only
 on the player's position.
 
-[Images of these two games]
+{{< figure src="/static/assets/pbg_blogpost/no-mans-sky.png" alt="A press-release image of No Man's Sky." class="largeSize" title="An image from No Man's Sky, taken from their press release. A whole universe made procedurally." >}}
 
 PCG is also a research field, in which scholars taxonomize, study and develop novel techniques for
-generating content. Researchers in this field include Julian Togelius, Georgios Yannakakis or
-my PhD supervisor Sebastian Risi, whose labs push forward these studies with great frequency. 
+generating content. Some of them involve searching over a certain representation of game content (e.g. describing a dungeon game as a graph of connected rooms, and searching over all possible graphs of a certain size), other involve exploring formal grammars that define game logic/assets, and most of them use randomness to create content. In Minecraft, the whole world is made using random number generators.
 
 **Researchers in PCG are in an ideal position to create constrained, dynamic & plug-and-play benchmarks.**
 If we can formulate benchmarks as pieces of content, we could leverage plenty of research in the
@@ -167,9 +158,9 @@ with a **discrete sequence** of amino acids {{< katex >}}(a_1, \dots, a_L){{< /k
 [^talking-about-ab-initio]: If you're a biologist, you'll cringe at my description.
 I'm talking here about *ab initio* protein design, where one starts from a wildtype. There's
 also *de novo* protein design, where one creates sequences of amino acids "from nothing". An example
-of *de novo* design is [the Chroma paper](TODO:ADD).
+of *de novo* design is [the Chroma paper](https://www.nature.com/articles/s41586-023-06728-8).
 
-[Image of a protein, and one mutation it's mutation]
+{{< figure src="/static/assets/pbg_blogpost/DNJA1.png" alt="DNJA1 visualized by Protein Viewer." class="midSize" title="An example of a protein (a tiny bit of DNJA1), which is a sequence of amino acids: Thr-Thr-Tyr-Tyr-Asp-... Each of these can be replaced with the aim of maximizing thermal stability or any other biophysical or medicinal property." >}}
 
 Nowadays, computing such signals is not straight-forward. The state-of-the-art at time of writing is using huge Machine Learning
 models to get estimates of binding affinity (AlphaFold 2, as an example), or using physical simulators. These are not easy to set-up,
@@ -177,7 +168,7 @@ and much less query: one needs to install licensed software, have decent amounts
 a minute per black box call.[^that's-why-we-developed-poli] In the language of Saxon et al., **these black boxes are not plug-and-play**.
 
 [^that's-why-we-developed-poli]: And that's why, in my previous job, we tried to develop a Python framework for democratizing
-access to some of these black boxes. It's called [poli]().
+access to some of these black boxes. It's called [poli](https://github.com/MachineLearningLifeScience/poli).
 
 In 2024, Stanton et al. published a paper called [*Closed-Form Test Functions for Biophysical Sequence Optimization Algorithms*](https://arxiv.org/abs/2407.00236).
 In it, they identify this lack of plug-and-play black boxes in protein design, and propose a black box that mimics the
