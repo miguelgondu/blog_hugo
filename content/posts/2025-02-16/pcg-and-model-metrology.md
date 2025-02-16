@@ -1,5 +1,5 @@
 ---
-date: "2025-02-02"
+date: "2025-02-16"
 title: "The future of black box optimization benchmarking is procedural"
 description: Recent work by Saxon et al. highlights the need for dynamic benchmarks, and I think procedural content generators might provide an answer.
 summary: Recent work by Saxon et al. highlights the need for dynamic benchmarks, and I think procedural content generators might provide an answer.
