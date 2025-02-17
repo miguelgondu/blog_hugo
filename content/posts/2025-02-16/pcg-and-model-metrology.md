@@ -169,9 +169,9 @@ I'm talking here about *ab initio* protein design, where one starts from a wildt
 also *de novo* protein design, where one creates sequences of amino acids "from nothing". An example
 of *de novo* design is [the Chroma paper](https://www.nature.com/articles/s41586-023-06728-8).
 
-{{< figure src="/static/assets/pbg_blogpost/DNJA1.png" alt="DNJA1 visualized by Protein Viewer." class="midSize" title="An example of a protein (a tiny bit of DNJA1), which is a sequence of amino acids: Thr-Thr-Tyr-Tyr-Asp-... Each of these can be replaced with the aim of maximizing thermal stability or any other biophysical or medicinal property." >}}
+{{< figure src="/static/assets/pbg_blogpost/DNJA1.png" alt="DNJA1 visualized by Protein Viewer." class="midSize" title="An example of a protein (a tiny bit of DNJA1), which is a sequence of amino acids: Thr-Thr-Tyr-Tyr-Asp-... Each of these can be mutated with the aim of maximizing thermal stability or any other biophysical or medicinal property." >}}
 
-Nowadays, computing such signals is not straight-forward. The state-of-the-art at time of writing is using huge Machine Learning
+Nowadays, computing such signals is not straightforward. The state-of-the-art at time of writing is using huge Machine Learning
 models to get estimates of binding affinity (AlphaFold 2, as an example), or using physical simulators. These are not easy to set-up,
 and much less query: one needs to install licensed software, have decent amounts of compute, and have the patience to wait for more than
 a minute per black box call.[^that's-why-we-developed-poli] In the language of Saxon et al., **these black boxes are not plug-and-play**.
