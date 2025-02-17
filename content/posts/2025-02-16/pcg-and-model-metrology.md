@@ -190,7 +190,7 @@ The authors set out to create a black box that is
 
 To do so, the authors propose *Ehrlich functions*, a procedurally generated black box based on a Markov Decision Process (MDP)
 to generate a "feasibility distribution" over the space of amino acids, and a set of motifs that needs to be satisfied in the
-sequence. Both the MDP and motifs are constructed using at random based on a seed.
+sequence. Both the MDP and motifs are constructed at random.
 
 When I first read this paper, I felt as if I was reading a PCG article: The authors propose a _procedurally generated_
 black box, which relies on randomness to create a set of conditions that need to be satisfied to _score_ a discrete sequence.
