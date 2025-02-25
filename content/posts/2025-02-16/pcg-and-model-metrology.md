@@ -54,7 +54,7 @@ a benchmark is a collection of problems in which a given system or model is test
 performance of a model is gauged by a collection of metrics, for example
 - classification accuracy in image recognition,
 - number of correctly answered questions in a standardized test (e.g. the BAR) in language modelling,
-- [prediction error with respect to the solutions of a differential equation](https://proceedings.neurips.cc/paper_files/paper/2022/file/0a9747136d411fb83f0cf81820d44afb-Paper-Datasets_and_Benchmarks.pdf) in scientific ML.
+- [prediction error with respect to the solutions of a differential equation](https://proceedings.neurips.cc/paper_files/paper/2022/file/0a9747136d411fb83f0cf81820d44afb-Paper-Datasets_and_Benchmarks.pdf) in scientific ML, and
 - [prediction error on the properties of mutated proteins](https://proteingym.org/) in structural biology.
 
 In the case of black box optimization, it's common to start benchmarking on
@@ -89,7 +89,7 @@ given real-world task.
 The current state of our benchmarking is such that, when a practitioner arrives with an
 interesting problem to optimize, we don't have much to show, and we can't confidently
 assess which algorithms would perform best in their problems. Best we can say is which
-algorithms perform best on highly synthetic, general sets of examples.[^carolas-work]
+algorithms perform well on highly synthetic, general sets of examples.[^carolas-work]
 
 [^carolas-work]: This is not entirely true. On one hand, there are several data-driven proxies for tasks in biology, chemistry, material science... On the other, we can tell practitioners to use tools
 for automatic selection of optimizers. There's at least plenty of research on making
@@ -159,20 +159,20 @@ can be applied to constructing black boxes that are relevant for specific domain
 
 # Example: closed-form test functions in structural biology
 
-Let me introduce you to the wonderful world of protein design.[^talking-about-ab-initio] The set-up goes like this: one starts
+Let me introduce you to the wonderful world of protein engineering.[^talking-about-ab-initio] The set-up goes like this: one starts
 with a **discrete sequence** of amino acids {{< katex >}}(a_1, \dots, a_L){{< /katex >}} called the
 **wildtype**, and the goal is to find slight deviations from this wildtype such that a signal {{< katex >}}r{{< /katex >}}
 (for example thermal stability, or whether the protein binds well to a certain receptor in the body) is optimized.
 
 [^talking-about-ab-initio]: If you're a biologist, you'll cringe at my description.
-I'm talking here about *ab initio* protein design, where one starts from a wildtype. There's
+I'm talking here about *ab initio* protein engineering, where one starts from a wildtype. There's
 also *de novo* protein design, where one creates sequences of amino acids "from nothing". An example
 of *de novo* design is [the Chroma paper](https://www.nature.com/articles/s41586-023-06728-8).
 
 {{< figure src="/static/assets/pbg_blogpost/DNJA1.png" alt="DNJA1 visualized by Protein Viewer." class="midSize" title="An example of a protein (a tiny bit of DNJA1), which is a sequence of amino acids: Thr-Thr-Tyr-Tyr-Asp-... Each of these can be mutated with the aim of maximizing thermal stability or any other biophysical or medicinal property." >}}
 
 Nowadays, computing such signals is not straightforward. The state-of-the-art at time of writing is using huge Machine Learning
-models to get estimates of binding affinity (AlphaFold 2, as an example), or using physical simulators. These are not easy to set-up,
+models to get estimates of binding scores (AlphaFold 2, as an example), or using physical simulators. These are not easy to set-up,
 and much less query: one needs to install licensed software, have decent amounts of compute, and have the patience to wait for more than
 a minute per black box call.[^that's-why-we-developed-poli] In the language of Saxon et al., **these black boxes are not plug-and-play**.
 
