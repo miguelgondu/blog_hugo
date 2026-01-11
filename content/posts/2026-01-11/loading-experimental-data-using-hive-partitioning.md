@@ -207,4 +207,4 @@ FROM read_json("results/**/*.json", hive_partitioning=true)
 
 This blogpost showed you that structuring your experimental results by using the variables in your design matrix allows you to easily load them up using `duckdb`. 
 
-It's important to note that you could also be storing your experiment's results using tools like `mlflow` or `wandb` (which are tailored for Machine Learning workflows). But I imagine this tutorial is useful when you're storing results locally in your HPC and then analyzing them.
+It's important to note that you could also be storing your experiment's results using tools like [`mlflow`](https://mlflow.org/) or [`wandb`](https://wandb.ai/site/) (which are tailored for Machine Learning workflows). But I imagine this tutorial is useful when you're storing results locally in your High-Performance Cluster (HPC) and then analyzing them.
