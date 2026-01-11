@@ -9,7 +9,7 @@ image: null
 
 > This blogpost has a code companion. [Check it out here!](https://github.com/miguelgondu/code-in-blogposts/tree/main/hive-partitioning-example)
 
-I learned a trick from [a friend called Oscar](https://github.com/odarbelaeze) recently: if you organize your experiments in a certain way, **you can easily load your results as pandas dataframes**. This is possible through a combination of hive partitioning and [duckdb](https://duckdb.org/docs/stable/data/partitioning/hive_partitioning).
+I learned a trick from [a friend called Oscar](https://github.com/odarbelaeze) recently: if you organize your experiments in a certain way, **you can easily load your results as pandas (or polars) dataframes**. This is possible through a combination of hive partitioning and [duckdb](https://duckdb.org/docs/stable/data/partitioning/hive_partitioning).
 
 # Probably your current setup
 
@@ -77,7 +77,7 @@ results/
 That is, **name your folders with the variables, and nest them**. With this, you can easily load them into `pd.DataFrame`s using `duckdb`:
 
 ```python
-import duckdb
+import duckdb  # `pip install duckdb` or `uv add duckdb`
 
 def load_results() -> pd.DataFrame:
     local_connection = duckdb.connect()
