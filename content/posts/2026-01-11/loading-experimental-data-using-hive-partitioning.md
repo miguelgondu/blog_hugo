@@ -1,6 +1,6 @@
 ---
 date: "2026-01-10"
-title: "Structuring and loading your experiment's results using hive partitioning and duckdb"
+title: "Structure your experiment's results using hive partitioning"
 description: If you structure your experiment's results in a certain way, you get the loading almost for free using duckdb.
 summary: If you structure your experiment's results in a certain way, you get the loading almost for free using duckdb.
 images: null
@@ -113,7 +113,7 @@ Now `df` will have `protein`, `molecule` `seed`, `binding_affinity`, and `accura
 
 You could even flex your SQL skills by running the computations you need (e.g. filtering, computing averages over seeds...) inside the SQL query itself. Indeed, one could run the entire data analysis in SQL, blazingly fast.
 
-## Another improvement: dataclasses or Pydantic models
+# Another improvement: dataclasses or Pydantic models
 
 For a less trivial example, imagine you are also storing some metadata per experiment (e.g. which model you used to compute the binding affinity, or a dataset you used during training). You could also load all this data into `DataFrame`s using `duckdb`, because it supports `json` loading!
 
