@@ -5,8 +5,6 @@ menu:
     weight: 5
 title: About
 ---
-# About me
-
 {{< figure src="/static/profile_photo.jpg" alt="An elephant at sunset" class="profile_pic" >}}
 
 I'm Miguel González Duque, a mathematician from the Universidad Nacional de Colombia, and a PhD from the IT University of Copenhagen (supervised by [Sebastian Risi](http://sebastianrisi.com/) and [Søren Hauberg](http://www2.compute.dtu.dk/~sohau/)). After my studies, I joined [MLLS](https://mlls.dk/) and [Wouter Boomsma](https://di.ku.dk/english/staff/vip/?pure=en/persons/275482)'s lab to work on discrete sequence optimization as a Machine Learning programmer. Nowadays I work as a Machine Learning engineer at [DBTune](https://www.dbtune.com/), in Malmö.

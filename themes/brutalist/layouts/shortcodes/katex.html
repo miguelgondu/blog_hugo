@@ -1,0 +1,6 @@
+{{/* KaTeX is loaded globally in head.html */}}
+<span {{- with .Get "class" }} class="{{ . }}"{{ end }}>
+  {{- cond (in .Params "display") "\\[" "\\(" -}}
+  {{- trim .Inner "\n" -}}
+  {{- cond (in .Params "display") "\\]" "\\)" -}}
+</span>
