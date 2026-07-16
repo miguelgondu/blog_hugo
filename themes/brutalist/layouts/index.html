@@ -1,0 +1,28 @@
+{{ define "main" }}
+<section class="intro">
+  <p>
+    Machine learning engineer interested in probabilistic modeling,
+    geometry, and optimization. Currently at <a href="https://www.dbtune.com/">DBTune</a>.
+  </p>
+  <p>
+    Previously: <a href="https://mlls.dk/">MLLS</a> / University of Copenhagen,
+    <a href="https://www.bosch-ai.com/">Bosch Center for AI</a>,
+    <a href="https://game.itu.dk/groups/creativeai/">IT University of Copenhagen</a>.
+  </p>
+</section>
+
+<hr>
+
+<section class="recent-posts">
+  <h2>RECENT POSTS</h2>
+  <ul class="post-list">
+    {{- range first 5 (where .Site.RegularPages "Section" "posts") }}
+    <li>
+      <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+    </li>
+    {{- end }}
+  </ul>
+  <p><a href="{{ "/blogposts/" | relURL }}">→ all posts</a></p>
+</section>
+{{ end }}

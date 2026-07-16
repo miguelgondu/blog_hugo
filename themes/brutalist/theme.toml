@@ -1,0 +1,9 @@
+name = "Brutalist"
+license = "MIT"
+licenselink = "https://github.com/miguelgondu/blog_hugo"
+description = "A minimal brutalist theme for Hugo"
+homepage = "https://miguelgondu.com"
+min_version = "0.80.0"
+
+[author]
+  name = "Miguel González Duque"

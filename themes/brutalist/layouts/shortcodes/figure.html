@@ -1,0 +1,22 @@
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" -}}
+{{- $caption := .Get "caption" -}}
+{{- $class := .Get "class" -}}
+{{- $title := .Get "title" -}}
+{{- $link := .Get "link" -}}
+
+<figure{{ with $class }} class="{{ . }}"{{ end }}>
+  {{- if $link }}<a href="{{ $link }}">{{ end -}}
+  <img src="{{ $src }}"
+       {{ with $alt }}alt="{{ . }}"{{ end }}
+       {{ with $title }}title="{{ . }}"{{ end }}
+       loading="lazy">
+  {{- if $link }}</a>{{ end -}}
+  {{- with $caption }}
+  <figcaption>{{ . | markdownify }}</figcaption>
+  {{- else }}
+  {{- with $title }}
+  <figcaption>{{ . | markdownify }}</figcaption>
+  {{- end }}
+  {{- end }}
+</figure>
