@@ -1,1 +1,1 @@
-My blog, created using the hugo-book theme.
+My blog, created using a brutalist theme.

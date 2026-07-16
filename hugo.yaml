@@ -14,7 +14,7 @@ markup:
     startLevel: 1
 
 params:
-  description: "Miguel's blog about machine learning and other stuff"
+  description: "Miguel's blog"
   images:
     - static/blog_banner.jpg
   social:
