@@ -4,6 +4,7 @@ menu:
     name: About
     weight: 5
 title: About
+description: "ML engineer interested in probabilistic modeling, geometry, and optimization."
 ---
 {{< figure src="/static/profile_photo.jpg" alt="An elephant at sunset" class="profile_pic" >}}
 
